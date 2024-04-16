@@ -2,8 +2,9 @@ import React from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import QuizTabScreen from '@src/screens/QuizTabScreen';
-import RecordTabScreen from '@src/screens/RecordTabScreen';
+import MainTabBar from '../components/MainTabBar';
+import QuizTabScreen from '../screens/QuizTabScreen';
+import RecordTabScreen from '../screens/RecordTabScreen';
 
 export type MainTabParamList = {
   QuizTab: undefined;
@@ -14,7 +15,12 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const MainTabNavigator = () => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      // eslint-disable-next-line react/no-unstable-nested-components
+      tabBar={(props) => <MainTabBar {...props} />}
+      screenOptions={{
+        headerShown: false,
+      }}>
       <Tab.Screen name="QuizTab" component={QuizTabScreen} />
       <Tab.Screen name="RecordTab" component={RecordTabScreen} />
     </Tab.Navigator>

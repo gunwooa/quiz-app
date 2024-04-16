@@ -1,17 +1,19 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ScreenParamList } from '@src/routes/NavigationContainer';
+import NavBackScreenHeader from '../components/common/NavBackScreenHeader';
+import { ScreenParamList } from '../routes/NavigationContainer';
 
 type Props = NativeStackScreenProps<ScreenParamList>;
 
 const RecordDetailScreen = ({}: Props) => {
   return (
-    <View>
+    <>
+      <NavBackScreenHeader />
       <Text>RecordDetailScreen</Text>
-    </View>
+    </>
   );
 };
 

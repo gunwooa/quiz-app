@@ -4,17 +4,12 @@ module.exports = {
   plugins: ['import'],
   rules: {
     // this is for sorting WITHIN an import
-    'sort-imports': ['error', {ignoreCase: true, ignoreDeclarationSort: true}],
+    'sort-imports': ['error', { ignoreCase: true, ignoreDeclarationSort: true }],
     // this is for sorting imports
     'import/order': [
       'error',
       {
-        groups: [
-          ['external', 'builtin'],
-          'internal',
-          ['sibling', 'parent'],
-          'index',
-        ],
+        groups: [['external', 'builtin'], 'internal', ['sibling', 'parent'], 'index'],
         pathGroups: [
           {
             pattern: '@(react|react-native)',
@@ -22,7 +17,7 @@ module.exports = {
             position: 'before',
           },
           {
-            pattern: '@src/**',
+            pattern: '~/**',
             group: 'internal',
           },
         ],

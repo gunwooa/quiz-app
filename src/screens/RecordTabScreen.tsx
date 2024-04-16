@@ -1,25 +1,22 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ScreenParamList } from '@src/routes/NavigationContainer';
+import ScreenHeader from '~/src/components/common/ScreenHeader';
+
+import { ScreenParamList } from '../routes/NavigationContainer';
 
 type Props = NativeStackScreenProps<ScreenParamList>;
 
 const RecordTabScreen = ({ navigation }: Props) => {
   return (
-    <View>
+    <>
+      <ScreenHeader headerLeft="기록" />
       <Text>RecordTabScreen</Text>
-      <Button
-        title="Go to QuizDetail"
-        onPress={() => navigation.navigate('QuizDetail')}
-      />
-      <Button
-        title="Go to RecordDetail"
-        onPress={() => navigation.navigate('RecordDetail')}
-      />
-    </View>
+      <Button title="Go to QuizDetail" onPress={() => navigation.navigate('QuizDetail')} />
+      <Button title="Go to RecordDetail" onPress={() => navigation.navigate('RecordDetail')} />
+    </>
   );
 };
 

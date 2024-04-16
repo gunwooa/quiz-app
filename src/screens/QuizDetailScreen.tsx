@@ -1,25 +1,21 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ScreenParamList } from '@src/routes/NavigationContainer';
+import NavBackScreenHeader from '../components/common/NavBackScreenHeader';
+import { ScreenParamList } from '../routes/NavigationContainer';
 
 type Props = NativeStackScreenProps<ScreenParamList>;
 
 const QuizDetailScreen = ({ navigation }: Props) => {
   return (
-    <View>
+    <>
+      <NavBackScreenHeader />
       <Text>QuizDetailScreen</Text>
-      <Button
-        title="Go to QuizTab"
-        onPress={() => navigation.navigate('QuizTab')}
-      />
-      <Button
-        title="Go to RecordTab"
-        onPress={() => navigation.navigate('RecordTab')}
-      />
-    </View>
+      <Button title="Go to QuizTab" onPress={() => navigation.navigate('QuizTab')} />
+      <Button title="Go to RecordTab" onPress={() => navigation.navigate('RecordTab')} />
+    </>
   );
 };
 
