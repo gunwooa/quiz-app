@@ -13,7 +13,7 @@ type QuizCategoryItemProps = {
 };
 
 export const CATEGORY_ITEM_HEIGHT = 100;
-const LOGO_SIZE = 56;
+const LOGO_SIZE = 60;
 
 const CATEGORY_LOGO: Record<number, ImageSourcePropType> = {
   9: require('assets/images/general-knowledge.webp'),
@@ -31,16 +31,15 @@ const CATEGORY_LOGO: Record<number, ImageSourcePropType> = {
   21: require('assets/images/sports.webp'),
   22: require('assets/images/geography.webp'),
   23: require('assets/images/history.webp'),
-  //
-  24: require('assets/images/general-knowledge.webp'),
-  25: require('assets/images/general-knowledge.webp'),
-  26: require('assets/images/general-knowledge.webp'),
-  27: require('assets/images/general-knowledge.webp'),
-  28: require('assets/images/general-knowledge.webp'),
-  29: require('assets/images/general-knowledge.webp'),
-  30: require('assets/images/general-knowledge.webp'),
-  31: require('assets/images/general-knowledge.webp'),
-  32: require('assets/images/general-knowledge.webp'),
+  24: require('assets/images/politics.webp'),
+  25: require('assets/images/art.webp'),
+  26: require('assets/images/celebrities.webp'),
+  27: require('assets/images/animals.webp'),
+  28: require('assets/images/vehicles.webp'),
+  29: require('assets/images/comics.webp'),
+  30: require('assets/images/science-gadgets.webp'),
+  31: require('assets/images/japanese-anime-manga.webp'),
+  32: require('assets/images/cartoon-animations.webp'),
 };
 
 const QuizCategoryItem: FC<QuizCategoryItemProps> = ({ category, onPress }) => {
@@ -50,7 +49,7 @@ const QuizCategoryItem: FC<QuizCategoryItemProps> = ({ category, onPress }) => {
     <TouchableOpacity onPress={onPress} style={styles.container}>
       <Image
         source={CATEGORY_LOGO[category.id]}
-        style={{ width: LOGO_SIZE, height: LOGO_SIZE, borderRadius: LOGO_SIZE / 2 }}
+        style={[styles.logo, { width: LOGO_SIZE, height: LOGO_SIZE, borderRadius: LOGO_SIZE / 2 }]}
       />
 
       <View style={styles.infoBox}>
@@ -80,6 +79,10 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 10,
     backgroundColor: color.WHITE,
+  },
+  logo: {
+    borderWidth: 1,
+    borderColor: color.BLACK,
   },
   infoBox: {
     flex: 1,
