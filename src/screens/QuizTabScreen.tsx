@@ -1,26 +1,25 @@
-import React from 'react';
-import { Button, StyleSheet, Text } from 'react-native';
+import React, { Suspense } from 'react';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import ScreenHeader from '~/src/components/common/ScreenHeader';
 
+import QuizCategoryContainer from '../components/quiz/QuizCategoryContainer';
+import QuizCategorySkeleton from '../components/quiz/QuizCategorySkeleton';
 import { ScreenParamList } from '../routes/NavigationContainer';
 
 type Props = NativeStackScreenProps<ScreenParamList>;
 
-const QuizTabScreen = ({ navigation }: Props) => {
+const QuizTabScreen = ({}: Props) => {
   return (
     <>
       <ScreenHeader headerLeft="퀴즈" />
 
-      <Text>QuizTabScreen</Text>
-      <Button title="Go to QuizDetail" onPress={() => navigation.navigate('QuizDetail')} />
-      <Button title="Go to RecordDetail" onPress={() => navigation.navigate('RecordDetail')} />
+      <Suspense fallback={<QuizCategorySkeleton />}>
+        <QuizCategoryContainer />
+      </Suspense>
     </>
   );
 };
 
 export default QuizTabScreen;
-
-const styles = StyleSheet.create({});

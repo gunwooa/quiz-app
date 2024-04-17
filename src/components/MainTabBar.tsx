@@ -8,6 +8,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CLIcon, { CLIconProps } from './common/CLIcon';
 import { MainTabParamList } from '../routes/MainTabNavigator';
 import { ScreenParamList } from '../routes/NavigationContainer';
+import { color } from '../styles/color';
 
 type MainTabBarProps = {} & BottomTabBarProps;
 
@@ -63,8 +64,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    backgroundColor: 'white',
-    shadowColor: 'black',
+    backgroundColor: color.WHITE,
+    shadowColor: color.BLACK,
     shadowOffset: {
       width: 0,
       height: 3,

@@ -3,6 +3,7 @@ import { TouchableOpacity, ViewStyle } from 'react-native';
 
 import { type SvgProps } from 'react-native-svg';
 
+import ArrowRightGray from '~/assets/icons/arrow-right-gray.svg';
 import NavBack from '~/assets/icons/nav-back.svg';
 import QuizFilled from '~/assets/icons/quiz-filled.svg';
 import QuizOutLined from '~/assets/icons/quiz-outlined.svg';
@@ -15,6 +16,7 @@ const SVG = {
   QuizOutLined,
   RecordFilled,
   RecordOutlined,
+  ArrowRightGray,
 };
 
 export type CLIconProps = {

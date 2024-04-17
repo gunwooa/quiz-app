@@ -3,6 +3,8 @@ import { StyleSheet, View, ViewStyle } from 'react-native';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { color } from '~/src/styles/color';
+
 import CLText from './CLText';
 
 export type ScreenHeaderProps = {
@@ -20,7 +22,7 @@ const ScreenHeader: FC<ScreenHeaderProps> = ({
   headerCenter,
   headerRight,
   style,
-  backgroundColor = 'white',
+  backgroundColor = color.WHITE,
 }) => {
   const insets = useSafeAreaInsets();
   return (
