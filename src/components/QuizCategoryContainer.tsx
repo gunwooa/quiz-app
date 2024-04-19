@@ -5,15 +5,15 @@ import useOpenScreen from '~/src/hooks/useOpenScreen';
 import { QuizCategory } from '~/src/types';
 
 import QuizCategoryListItem from './QuizCategoryListItem';
+import useQuizBundle from '../hooks/useQuizBundle';
 import useQuizCategoriesQuery from '../hooks/useQuizCategoriesQuery';
-import useQuizListStore from '../stores/quiz-bundle-list';
 
 type QuizCategoryContainerProps = {};
 
 const QuizCategoryContainer: FC<QuizCategoryContainerProps> = () => {
   const { openScreen } = useOpenScreen();
   const { data: categories } = useQuizCategoriesQuery();
-  const { getProgressingQuizBundleIndex } = useQuizListStore();
+  const { getProgressingQuizBundleIndex } = useQuizBundle({});
 
   const handlePressCategory = useCallback(
     (category: QuizCategory) => {

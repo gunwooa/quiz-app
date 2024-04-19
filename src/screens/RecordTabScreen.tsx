@@ -7,8 +7,9 @@ import ScreenHeader from '~/src/components/common/ScreenHeader';
 
 import QuizRecordListItem from '../components/QuizRecordListItem';
 import useOpenScreen from '../hooks/useOpenScreen';
+import useQuizBundle from '../hooks/useQuizBundle';
 import { ScreenParamList } from '../routes/NavigationContainer';
-import useQuizListStore, { QuizBundle } from '../stores/quiz-bundle-list';
+import { QuizBundle } from '../stores/quiz-bundle-list';
 
 type Props = NativeStackScreenProps<ScreenParamList>;
 
@@ -19,7 +20,7 @@ const SCREEN_NAME = {
 } as const;
 
 const RecordTabScreen = ({}: Props) => {
-  const { quizBundleList } = useQuizListStore();
+  const { quizBundleList } = useQuizBundle({});
   const { openScreen } = useOpenScreen();
 
   const handlePressCategory = useCallback(
@@ -29,7 +30,7 @@ const RecordTabScreen = ({}: Props) => {
     [openScreen],
   );
 
-  console.log('🐾', quizBundleList.length);
+  console.log('🐾 RecordTabScreen ', quizBundleList.length);
 
   return (
     <>

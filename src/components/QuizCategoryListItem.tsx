@@ -1,13 +1,13 @@
 import React, { FC, useCallback, useMemo } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import useQuizListStore from '~/src/stores/quiz-bundle-list';
 import { color } from '~/src/styles/color';
 import { QuizCategory } from '~/src/types';
 
 import CLIcon from './common/CLIcon';
 import CLText from './common/CLText';
 import { CATEGORY_LOGO } from '../constants/image';
+import useQuizBundle from '../hooks/useQuizBundle';
 
 type QuizCategoryListItemProps = {
   category: QuizCategory;
@@ -18,7 +18,7 @@ export const CATEGORY_ITEM_HEIGHT = 100;
 const LOGO_SIZE = 68;
 
 const QuizCategoryListItem: FC<QuizCategoryListItemProps> = ({ category, onPress }) => {
-  const { quizBundleList, getProgressingQuizBundleIndex } = useQuizListStore();
+  const { quizBundleList, getProgressingQuizBundleIndex } = useQuizBundle({});
 
   const quizBundle = useMemo(
     () => quizBundleList[getProgressingQuizBundleIndex(category.id)],

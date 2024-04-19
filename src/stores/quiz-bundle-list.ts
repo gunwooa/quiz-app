@@ -19,7 +19,7 @@ export type QuizBundle = {
   }[];
 };
 
-interface QuizListStore {
+interface QuizBundleListStore {
   quizBundleList: QuizBundle[];
   getProgressingQuizBundleIndex: (categoryId?: number) => number;
   createId: () => number;
@@ -31,7 +31,7 @@ interface QuizListStore {
   reset: () => void;
 }
 
-const useQuizListStore = create<QuizListStore>()(
+const useQuizBundleListStore = create<QuizBundleListStore>()(
   persist(
     (set, get) => ({
       quizBundleList: [],
@@ -88,8 +88,8 @@ const useQuizListStore = create<QuizListStore>()(
       },
     }),
 
-    { name: 'quiz-list-store', storage: createJSONStorage(() => AsyncStorage) },
+    { name: 'quiz-bundle-list-store', storage: createJSONStorage(() => AsyncStorage) },
   ),
 );
 
-export default useQuizListStore;
+export default useQuizBundleListStore;
