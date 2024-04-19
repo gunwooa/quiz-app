@@ -20,6 +20,7 @@ type TextStyleTypes =
 type CLTextProps = {
   type: TextStyleTypes;
   color?: string;
+  textAlign?: 'left' | 'center' | 'right';
   mt?: number;
   mb?: number;
   ml?: number;
@@ -44,6 +45,7 @@ const styles = StyleSheet.create({
 const CLText: React.FC<CLTextProps> = ({
   type,
   color,
+  textAlign,
   mt,
   mb,
   ml,
@@ -58,6 +60,7 @@ const CLText: React.FC<CLTextProps> = ({
         styles[type],
         {
           color,
+          textAlign,
           marginTop: mt,
           marginBottom: mb,
           marginLeft: ml,

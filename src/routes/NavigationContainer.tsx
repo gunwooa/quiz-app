@@ -9,7 +9,7 @@ import RecordDetailScreen from '../screens/RecordDetailScreen';
 
 type RootStackParamList = {
   MainTab: undefined;
-  QuizDetail: { id: number };
+  QuizDetail: { categoryId: number };
   RecordDetail: undefined;
 };
 

@@ -13,8 +13,8 @@ const QuizCategoryContainer: FC<QuizCategoryContainerProps> = () => {
   const { data: categories } = useQuizCategoriesQuery();
 
   const handlePressCategory = useCallback(
-    (id: number) => {
-      openScreen('push', 'QuizDetail', { id });
+    (categoryId: number) => {
+      openScreen('push', 'QuizDetail', { categoryId });
     },
     [openScreen],
   );
