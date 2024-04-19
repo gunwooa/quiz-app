@@ -1,7 +1,7 @@
 import { UndefinedInitialDataOptions, useQuery } from '@tanstack/react-query';
 
 import { getQuiz } from '../apis';
-import { queryKey } from '../constants/queryKey';
+import { QUERY_KEY } from '../constants/queryKey';
 import { QuizResponse } from '../types';
 
 const useQuizDetailQuery = ({
@@ -13,7 +13,7 @@ const useQuizDetailQuery = ({
   quizBundleId?: number;
 }) => {
   const res = useQuery({
-    queryKey: queryKey.quizDetail({ categoryId, quizBundleId }),
+    queryKey: QUERY_KEY.quizDetail({ categoryId, quizBundleId }),
     queryFn: () => getQuiz({ categoryId }),
     ...options,
   });
