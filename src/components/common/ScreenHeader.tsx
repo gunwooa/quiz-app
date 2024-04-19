@@ -17,16 +17,10 @@ export type ScreenHeaderProps = {
 
 const HEADER_HEIGHT = 44;
 
-const ScreenHeader: FC<ScreenHeaderProps> = ({
-  headerLeft,
-  headerCenter,
-  headerRight,
-  style,
-  backgroundColor = color.WHITE,
-}) => {
+const ScreenHeader: FC<ScreenHeaderProps> = ({ headerLeft, headerCenter, headerRight, style }) => {
   const insets = useSafeAreaInsets();
   return (
-    <View style={[style, { paddingTop: insets.top, backgroundColor }]}>
+    <View style={[style, styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           {typeof headerLeft === 'string' ? <CLText type="H4">{headerLeft}</CLText> : headerLeft}
@@ -56,6 +50,12 @@ export const MainTabHeaderRowView: FC<{
 };
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: color.WHITE,
+    borderBottomWidth: 1,
+    borderBottomColor: color.GRAY_SCALE_2,
+  },
+
   header: {
     zIndex: 999,
     height: HEADER_HEIGHT,

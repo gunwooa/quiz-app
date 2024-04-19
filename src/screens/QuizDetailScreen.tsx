@@ -1,12 +1,14 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import CLText from '../components/common/CLText';
 import NavBackScreenHeader from '../components/common/NavBackScreenHeader';
+import QuizContentContainer from '../components/QuizContentContainer';
 import QuizContentNavBar from '../components/QuizContentNavBar';
 import QuizDetailSkeleton from '../components/QuizDetailSkeleton';
+import useOpenScreen from '../hooks/useOpenScreen';
 import useQuizBundle from '../hooks/useQuizBundle';
 import useQuizDetailQuery from '../hooks/useQuizDetailQuery';
 import { ScreenParamList } from '../routes/NavigationContainer';
@@ -16,6 +18,8 @@ type Props = NativeStackScreenProps<ScreenParamList, 'QuizDetail'>;
 
 const QuizDetailScreen = ({ route }: Props) => {
   const { category, quizBundleId, queryEnabled = false } = route.params;
+
+  const { openScreen } = useOpenScreen();
 
   const { data, isFetching, refetch } = useQuizDetailQuery({
     categoryId: category?.id ?? -1,
@@ -30,8 +34,52 @@ const QuizDetailScreen = ({ route }: Props) => {
     pushQuizBundle,
     removeQuizBundle,
     generateQuizBundle,
+    setter,
     reset,
   } = useQuizBundle({ categoryId: category?.id, quizBundleId });
+
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  const currentQuizzesIndex = useMemo(
+    () => quizBundle?.currentQuizzesIndex ?? 0,
+    [quizBundle?.currentQuizzesIndex],
+  );
+
+  const handleChangeSelectedIndex = useCallback((index: number | null) => {
+    setSelectedIndex(index);
+  }, []);
+
+  const handlePressPrevButton = useCallback(() => {
+    if (!quizBundle) {
+      return;
+    }
+    setter(quizBundle?.id, 'currentQuizzesIndex', currentQuizzesIndex - 1);
+    setSelectedIndex(null);
+  }, [currentQuizzesIndex, quizBundle, setter]);
+
+  const handlePressNextButton = useCallback(() => {
+    if (!quizBundle) {
+      return;
+    }
+
+    const isLastQuiz = currentQuizzesIndex === quizBundle.quizzes.length - 1;
+    if (isLastQuiz) {
+      openScreen('replace', 'RecordDetail', { quizBundleId: quizBundle?.id });
+      setter(quizBundle.id, 'status', 'complete');
+    } else {
+      setter(quizBundle.id, 'currentQuizzesIndex', currentQuizzesIndex + 1);
+      setSelectedIndex(null);
+    }
+  }, [currentQuizzesIndex, openScreen, quizBundle, setter]);
+
+  const handleCheckAnswer = useCallback(() => {
+    if (!quizBundle) {
+      return;
+    }
+    const updatedQuizzes = [...quizBundle.quizzes];
+    updatedQuizzes[currentQuizzesIndex].selectedIndex = selectedIndex;
+    setter(quizBundle.id, 'quizzes', updatedQuizzes);
+  }, [currentQuizzesIndex, quizBundle, selectedIndex, setter]);
 
   const handleRefetchQuiz = useCallback(() => {
     Alert.alert(
@@ -54,6 +102,14 @@ const QuizDetailScreen = ({ route }: Props) => {
       ],
     );
   }, [quizBundle?.id, refetch, removeQuizBundle]);
+
+  useEffect(() => {
+    const focusedQuizSelectedIndex =
+      quizBundle?.quizzes[quizBundle.currentQuizzesIndex].selectedIndex;
+    if (focusedQuizSelectedIndex !== null && focusedQuizSelectedIndex !== undefined) {
+      setSelectedIndex(focusedQuizSelectedIndex);
+    }
+  }, [quizBundle?.currentQuizzesIndex, quizBundle?.quizzes]);
 
   // TODO : useQuizBundle 훅 내부로 옮길지 고민, 안옮겨도 될듯, 이 화면에서만 사용하는 것 같음
   useEffect(() => {
@@ -78,15 +134,15 @@ const QuizDetailScreen = ({ route }: Props) => {
     pushQuizBundle,
   ]);
 
-  console.log(
-    category,
-    getProgressingQuizBundleIndex(category?.id),
-    quizBundle?.id,
-    '🔥',
-    isFetching,
-    data?.results.length,
-  );
-  // console.log('1✅', quizBundle);
+  // console.log(
+  //   category,
+  //   getProgressingQuizBundleIndex(category?.id),
+  //   quizBundle?.id,
+  //   '🔥',
+  //   isFetching,
+  //   data?.results.length,
+  // );
+  console.log('1✅', JSON.stringify(quizBundle));
   // console.log('2✅', JSON.stringify(quizBundleList));
 
   return (
@@ -112,21 +168,20 @@ const QuizDetailScreen = ({ route }: Props) => {
         <QuizDetailSkeleton />
       ) : (
         <>
-          {/* <Button
-            title="refetch"
-            onPress={() => {
-              setter(quizBundle?.id ?? -1, 'status', 'complete');
-              // const updatedQuizzes = [...quiz.quizzes];
-              // updatedQuizzes[quiz.currentQuizzesIndex].selectedIndex = 1;
-              // setter(quiz.id, 'quizzes', updatedQuizzes);
-            }}
-          /> */}
           <Button title="reset" onPress={reset} />
 
-          <QuizContentNavBar
-            // categoryId={category?.id}
-            // quizBundleId={quizBundleId}
+          <QuizContentContainer
             quizBundle={quizBundle}
+            selectedIndex={selectedIndex}
+            onChangeSelectedIndex={handleChangeSelectedIndex}
+          />
+
+          <QuizContentNavBar
+            quizBundle={quizBundle}
+            selectedIndex={selectedIndex}
+            onPressPrevButton={handlePressPrevButton}
+            onPressNextButton={handlePressNextButton}
+            onCheckAnswer={handleCheckAnswer}
           />
         </>
       )}

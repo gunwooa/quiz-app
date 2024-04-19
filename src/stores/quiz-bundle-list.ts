@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { decode } from 'html-entities';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -12,7 +13,7 @@ export type QuizBundle = {
   category: QuizCategory;
   quizzes: {
     origin: Quiz;
-    options: [string, string, string, string];
+    options: string[];
     answerIndex: number;
     selectedIndex: number | null;
     elapsedTimeInSeconds: number | null;
@@ -50,12 +51,21 @@ const useQuizBundleListStore = create<QuizBundleListStore>()(
       },
       generateQuizBundle: ({ category, originQuizzes }) => {
         const quizzes: QuizBundle['quizzes'] = originQuizzes.map((quiz) => {
-          const options = shuffle([quiz.correct_answer, ...quiz.incorrect_answers]);
-          const answerIndex = options.indexOf(quiz.correct_answer);
+          const decodedQuiz: Quiz = {
+            ...quiz,
+            category: decode(quiz.category),
+            question: decode(quiz.question),
+            correct_answer: decode(quiz.correct_answer),
+            incorrect_answers: quiz.incorrect_answers.map((incorrect_answer) =>
+              decode(incorrect_answer),
+            ),
+          };
+
+          const options = shuffle([decodedQuiz.correct_answer, ...decodedQuiz.incorrect_answers]);
           return {
-            origin: quiz,
-            options: options as [string, string, string, string],
-            answerIndex,
+            origin: decodedQuiz,
+            options,
+            answerIndex: options.indexOf(decodedQuiz.correct_answer),
             selectedIndex: null,
             elapsedTimeInSeconds: null,
           };

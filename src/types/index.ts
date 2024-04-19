@@ -13,7 +13,7 @@ export type Quiz = {
   category: string;
   question: string;
   correct_answer: string;
-  incorrect_answers: [string, string, string];
+  incorrect_answers: string[];
 };
 
 export type QuizResponse = {

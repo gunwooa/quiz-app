@@ -65,6 +65,7 @@ const CLText: React.FC<CLTextProps> = ({
           marginBottom: mb,
           marginLeft: ml,
           marginRight: mr,
+          lineHeight: styles[type].fontSize * 1.3,
         },
         style,
       ]}
