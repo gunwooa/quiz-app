@@ -6,13 +6,15 @@ import { QuizResponse } from '../types';
 
 const useQuizDetailQuery = ({
   categoryId,
+  quizBundleId,
   ...options
 }: Omit<UndefinedInitialDataOptions<QuizResponse>, 'queryKey' | 'queryFn'> & {
   categoryId: number;
+  quizBundleId?: number;
 }) => {
   const res = useQuery({
-    queryKey: queryKey.quizDetail(categoryId),
-    queryFn: () => getQuiz({ category: categoryId }),
+    queryKey: queryKey.quizDetail({ categoryId, quizBundleId }),
+    queryFn: () => getQuiz({ categoryId }),
     ...options,
   });
 

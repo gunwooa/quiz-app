@@ -1,23 +1,20 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Button, StyleSheet, View } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useQueryClient } from '@tanstack/react-query';
 
 import CLText from '../components/common/CLText';
 import NavBackScreenHeader from '../components/common/NavBackScreenHeader';
-import { queryKey } from '../constants/queryKey';
+import QuizDetailSkeleton from '../components/QuizDetailSkeleton';
 import useQuizDetailQuery from '../hooks/useQuizDetailQuery';
 import { ScreenParamList } from '../routes/NavigationContainer';
 import useQuizListStore from '../stores/quiz-bundle-list';
 import { color } from '../styles/color';
-import { QuizCategoryResponse } from '../types';
 
 type Props = NativeStackScreenProps<ScreenParamList, 'QuizDetail'>;
 
-const QuizDetailScreen = ({ route, navigation }: Props) => {
-  const { categoryId } = route.params;
-  const queryClient = useQueryClient();
+const QuizDetailScreen = ({ route }: Props) => {
+  const { category, quizBundleId, queryEnabled = false } = route.params;
 
   const {
     quizBundleList,
@@ -30,39 +27,50 @@ const QuizDetailScreen = ({ route, navigation }: Props) => {
   } = useQuizListStore();
 
   const { data, isFetching, refetch } = useQuizDetailQuery({
-    categoryId,
+    categoryId: category?.id ?? -1,
+    quizBundleId,
+    enabled: queryEnabled,
     gcTime: 0,
   });
 
-  const quizName = queryClient
-    .getQueryData<QuizCategoryResponse>(queryKey.quizCategories())
-    ?.trivia_categories.find((c) => c.id === categoryId)?.name;
-
-  const quizBundle = useMemo(
-    () => quizBundleList[getProgressingQuizBundleIndex(categoryId)],
-    [categoryId, getProgressingQuizBundleIndex, quizBundleList],
-  );
-
-  console.log(categoryId, getProgressingQuizBundleIndex(categoryId), '🔥', isFetching, data);
+  const quizBundle = useMemo(() => {
+    return category?.id
+      ? quizBundleList[getProgressingQuizBundleIndex(category.id)]
+      : quizBundleList.find((q) => q.id === quizBundleId);
+  }, [category?.id, getProgressingQuizBundleIndex, quizBundleId, quizBundleList]);
 
   useEffect(() => {
-    if (getProgressingQuizBundleIndex(categoryId) === -1 && data?.results) {
-      const q = generateQuizBundle({
-        categoryId,
+    if (
+      category &&
+      getProgressingQuizBundleIndex(category.id) === -1 &&
+      !isFetching &&
+      data?.results
+    ) {
+      const _quizBundle = generateQuizBundle({
+        category,
         originQuizzes: data?.results ?? [],
       });
-
-      pushQuizBundle(q);
+      pushQuizBundle(_quizBundle);
     }
   }, [
-    categoryId,
+    category,
     data?.results,
     generateQuizBundle,
     getProgressingQuizBundleIndex,
+    isFetching,
     pushQuizBundle,
   ]);
 
-  console.log('✅', JSON.stringify(quizBundle));
+  console.log(
+    category,
+    getProgressingQuizBundleIndex(category?.id),
+    quizBundle?.id,
+    '🔥',
+    isFetching,
+    data?.results.length,
+  );
+  // console.log('1✅', quizBundle);
+  // console.log('2✅', JSON.stringify(quizBundleList));
 
   return (
     <>
@@ -70,13 +78,31 @@ const QuizDetailScreen = ({ route, navigation }: Props) => {
         headerCenter={
           <View style={styles.headerCenterBox}>
             <CLText type="Body3" color={color.GRAY_SCALE_7}>
-              {quizName}
+              {category?.name}
             </CLText>
           </View>
         }
       />
 
-      <CLText type="H1">{categoryId}</CLText>
+      {isFetching ? (
+        <QuizDetailSkeleton />
+      ) : (
+        <>
+          <Button
+            title="refetch"
+            onPress={() => {
+              setter(quizBundle?.id ?? -1, 'status', 'complete');
+              // const updatedQuizzes = [...quiz.quizzes];
+              // updatedQuizzes[quiz.currentQuizzesIndex].selectedIndex = 1;
+              // setter(quiz.id, 'quizzes', updatedQuizzes);
+              // removeQuizBundle(quizBundle?.id ?? -1);
+              // refetch();
+            }}
+          />
+          <Button title="reset" onPress={reset} />
+          <CLText type="H1">{quizBundle?.id}</CLText>
+        </>
+      )}
     </>
   );
 };
@@ -89,21 +115,3 @@ const styles = StyleSheet.create({
     width: '50%',
   },
 });
-
-{
-  /* <Button
-        title="refetch"
-        onPress={() => {
-          // setter(id, 'status', 'again');
-          // const quiz = quizBundleList[getProgressingQuizBundleIndex(categoryId)];
-          // const updatedQuizzes = [...quiz.quizzes];
-          // updatedQuizzes[quiz.currentQuizzesIndex].selectedIndex = 1;
-          // setter(quiz.id, 'quizzes', updatedQuizzes);
-          // removeQuizBundle(getProgressingQuizBundleIndex(categoryId));
-          // refetch();
-        }}
-      /> */
-}
-{
-  /* <Button title="reset" onPress={reset} /> */
-}

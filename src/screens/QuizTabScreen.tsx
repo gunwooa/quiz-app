@@ -4,8 +4,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import ScreenHeader from '~/src/components/common/ScreenHeader';
 
-import QuizCategoryContainer from '../components/quiz/QuizCategoryContainer';
-import QuizCategorySkeleton from '../components/quiz/QuizCategorySkeleton';
+import QuizCategoryContainer from '../components/QuizCategoryContainer';
+import QuizCategorySkeleton from '../components/QuizCategorySkeleton';
 import { ScreenParamList } from '../routes/NavigationContainer';
 
 type Props = NativeStackScreenProps<ScreenParamList>;

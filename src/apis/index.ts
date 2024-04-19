@@ -11,16 +11,16 @@ export const getQuizCategories = async () => {
 };
 
 export const getQuiz = async ({
-  category,
+  categoryId,
   amount = 15,
   type = 'multiple',
 }: {
-  category: number;
+  categoryId: number;
   amount?: number;
   type?: Quiz['type'];
 }) => {
   const res = await axios.get<QuizResponse>(`${BASE_URL}/api.php`, {
-    params: { amount, category, type },
+    params: { amount, category: categoryId, type },
   });
   return res.data;
 };

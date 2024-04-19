@@ -6,11 +6,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainTabNavigator, { MainTabParamList } from './MainTabNavigator';
 import QuizDetailScreen from '../screens/QuizDetailScreen';
 import RecordDetailScreen from '../screens/RecordDetailScreen';
+import { QuizCategory } from '../types';
 
 type RootStackParamList = {
   MainTab: undefined;
-  QuizDetail: { categoryId: number };
-  RecordDetail: undefined;
+  QuizDetail: { category?: QuizCategory; quizBundleId?: number; queryEnabled?: boolean };
+  RecordDetail: { quizBundleId: number };
 };
 
 export type ScreenParamList = RootStackParamList & MainTabParamList;

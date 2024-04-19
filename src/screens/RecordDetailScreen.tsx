@@ -6,13 +6,15 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import NavBackScreenHeader from '../components/common/NavBackScreenHeader';
 import { ScreenParamList } from '../routes/NavigationContainer';
 
-type Props = NativeStackScreenProps<ScreenParamList>;
+type Props = NativeStackScreenProps<ScreenParamList, 'RecordDetail'>;
 
-const RecordDetailScreen = ({}: Props) => {
+const RecordDetailScreen = ({ route }: Props) => {
+  const { quizBundleId } = route.params;
+
   return (
     <>
       <NavBackScreenHeader />
-      <Text>RecordDetailScreen</Text>
+      <Text>{quizBundleId}</Text>
     </>
   );
 };
