@@ -8,9 +8,9 @@ import QuizCategoryListItem from './QuizCategoryListItem';
 import useQuizBundle from '../hooks/useQuizBundle';
 import useQuizCategoriesQuery from '../hooks/useQuizCategoriesQuery';
 
-type QuizCategoryContainerProps = {};
+type QuizCategoryListProps = {};
 
-const QuizCategoryContainer: FC<QuizCategoryContainerProps> = () => {
+const QuizCategoryList: FC<QuizCategoryListProps> = () => {
   const { openScreen } = useOpenScreen();
   const { data: categories } = useQuizCategoriesQuery();
   const { getProgressingQuizBundleIndex, quizReset, quizBundleList } = useQuizBundle({});
@@ -47,7 +47,7 @@ const QuizCategoryContainer: FC<QuizCategoryContainerProps> = () => {
   );
 };
 
-export default QuizCategoryContainer;
+export default QuizCategoryList;
 
 const styles = StyleSheet.create({
   contentContainer: {

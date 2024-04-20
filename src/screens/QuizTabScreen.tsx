@@ -5,12 +5,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import ScreenHeader from '~/src/components/common/ScreenHeader';
 
-import QuizCategoryContainer from '../components/QuizCategoryContainer';
-import QuizCategorySkeleton from '../components/QuizCategorySkeleton';
+import QuizCategoryList from '../components/QuizCategoryList';
+import QuizMainTabSkeleton from '../components/QuizMainTabSkeleton';
 import useQuizBundle from '../hooks/useQuizBundle';
 import { ScreenParamList } from '../routes/NavigationContainer';
 
-type Props = NativeStackScreenProps<ScreenParamList>;
+type Props = NativeStackScreenProps<ScreenParamList, 'QuizTab'>;
 
 const QuizTabScreen = ({}: Props) => {
   const { allReset } = useQuizBundle({});
@@ -22,8 +22,8 @@ const QuizTabScreen = ({}: Props) => {
         headerRight={<Button title="all reset" onPress={allReset} />}
       />
 
-      <Suspense fallback={<QuizCategorySkeleton />}>
-        <QuizCategoryContainer />
+      <Suspense fallback={<QuizMainTabSkeleton />}>
+        <QuizCategoryList />
       </Suspense>
     </>
   );

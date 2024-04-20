@@ -6,7 +6,7 @@ import QuizTimer from './QuizTimer';
 import { QuizBundle } from '../stores/quiz-bundle-list';
 import { color } from '../styles/color';
 
-type QuizContentContainerProps = {
+type QuizContentBoxProps = {
   quizBundle?: QuizBundle;
   selectedIndex: number | null;
   seconds: number;
@@ -69,7 +69,7 @@ const SelectButton: FC<{
   );
 };
 
-const QuizContentContainer: FC<QuizContentContainerProps> = ({
+const QuizContentBox: FC<QuizContentBoxProps> = ({
   quizBundle,
   selectedIndex,
   seconds,
@@ -141,7 +141,7 @@ const QuizContentContainer: FC<QuizContentContainerProps> = ({
   );
 };
 
-export default QuizContentContainer;
+export default QuizContentBox;
 
 const styles = StyleSheet.create({
   container: {
