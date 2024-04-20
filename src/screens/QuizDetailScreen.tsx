@@ -68,7 +68,7 @@ const QuizDetailScreen = ({ route }: Props) => {
     }, [handleGoBack]),
   );
 
-  console.log('✅', JSON.stringify(quizBundle));
+  console.log(category, quizBundleId, '✅', JSON.stringify(quizBundle));
   // console.log('2✅', JSON.stringify(quizBundleList));
 
   return (
@@ -77,20 +77,24 @@ const QuizDetailScreen = ({ route }: Props) => {
         onCustomGoBack={handleGoBack}
         headerCenter={
           <View style={styles.headerCenterBox}>
-            <CLText type="Body3" color={color.GRAY_SCALE_7}>
-              {category?.name} ({quizBundle?.id}) {/* FIXME : 임시용 표시  */}
+            <CLText type="Body3">
+              {category?.name ?? quizBundle?.category.name} ({quizBundle?.id}){' '}
             </CLText>
           </View>
         }
         headerRight={
-          <TouchableOpacity
-            onPress={() => {
-              notify(ObserverKey.QuizRefetchCall);
-            }}>
-            <CLText type="Body3" color={color.BLUE}>
-              다른문제
-            </CLText>
-          </TouchableOpacity>
+          category ? (
+            <TouchableOpacity
+              onPress={() => {
+                notify(ObserverKey.QuizRefetchCall);
+              }}>
+              <CLText type="Body3" color={color.BLUE}>
+                다른문제
+              </CLText>
+            </TouchableOpacity>
+          ) : (
+            <></>
+          )
         }
       />
 

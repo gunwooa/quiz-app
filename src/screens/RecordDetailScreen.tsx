@@ -1,13 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import CLText from '../components/common/CLText';
 import NavBackScreenHeader from '../components/common/NavBackScreenHeader';
 import TabView from '../components/common/TabView';
 import QuizContainer from '../components/QuizContainer';
+import useOpenScreen from '../hooks/useOpenScreen';
 import useQuizBundle from '../hooks/useQuizBundle';
 import { ScreenParamList } from '../routes/NavigationContainer';
+import { color } from '../styles/color';
 
 type Props = NativeStackScreenProps<ScreenParamList, 'RecordDetail'>;
 
@@ -21,7 +24,8 @@ const TABS: { key: TabKey; title: string }[] = [
 const RecordDetailScreen = ({ route }: Props) => {
   const { quizBundleId } = route.params;
 
-  const { quizBundle, setter } = useQuizBundle({
+  const { openScreen } = useOpenScreen();
+  const { quizBundle, setter, quizReset } = useQuizBundle({
     quizBundleId,
   });
 
@@ -29,10 +33,25 @@ const RecordDetailScreen = ({ route }: Props) => {
 
   const handleIndexChange = useCallback((_tabKey: TabKey) => {
     setTabKey(_tabKey);
-    // if (tabKey === _tabKey) {
-    //   handleScrollToTop(_tabKey);
-    // }
   }, []);
+
+  const handleAgainQuiz = useCallback(() => {
+    Alert.alert('알림', '기록이 모두 초기화됩니다.\n그래도 다시 푸시겠습니까?', [
+      {
+        text: '네',
+        onPress: () => {
+          quizReset({ id: quizBundleId, type: 'again' });
+          openScreen('replace', 'QuizDetail', { quizBundleId });
+        },
+        style: 'destructive',
+      },
+      {
+        text: '아니요',
+        onPress: () => {},
+        style: 'cancel',
+      },
+    ]);
+  }, [openScreen, quizBundleId, quizReset]);
 
   console.log('RecordDetailScreen 🎁', quizBundle);
 
@@ -42,7 +61,21 @@ const RecordDetailScreen = ({ route }: Props) => {
 
   return (
     <>
-      <NavBackScreenHeader />
+      <NavBackScreenHeader
+        headerCenter={
+          <View style={styles.headerCenterBox}>
+            <CLText type="Body4">기록 상세 ({quizBundle?.id})</CLText>
+            <CLText type="Body4">{quizBundle?.category.name}</CLText>
+          </View>
+        }
+        headerRight={
+          <TouchableOpacity onPress={handleAgainQuiz}>
+            <CLText type="Body3" color={color.BLUE}>
+              다시풀기
+            </CLText>
+          </TouchableOpacity>
+        }
+      />
 
       <TabView<TabKey>
         tabs={TABS}
@@ -65,5 +98,9 @@ const styles = StyleSheet.create({
   tabBarItemStyle: {
     paddingTop: 12,
     paddingBottom: 8,
+  },
+  headerCenterBox: {
+    alignItems: 'center',
+    width: '50%',
   },
 });
