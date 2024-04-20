@@ -93,7 +93,9 @@ const QuizDetailScreen = ({ route }: Props) => {
               </CLText>
             </TouchableOpacity>
           ) : (
-            <></>
+            <CLText type="Body3" color={color.GRAY_SCALE_4}>
+              다시 푸는 중
+            </CLText>
           )
         }
       />

@@ -35,7 +35,7 @@ const QuizTimer: FC<QuizTimerProps> = ({ seconds, isActive, setSeconds }) => {
 
   return (
     <View style={styles.container}>
-      <CLText type="H2" color={color.GRAY_SCALE_7}>
+      <CLText type="H3" color={color.GRAY_SCALE_7}>
         {formatTime()}
       </CLText>
     </View>
