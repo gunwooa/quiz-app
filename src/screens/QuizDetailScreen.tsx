@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, Button, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import CLText from '../components/common/CLText';
@@ -19,7 +20,7 @@ type Props = NativeStackScreenProps<ScreenParamList, 'QuizDetail'>;
 const QuizDetailScreen = ({ route }: Props) => {
   const { category, quizBundleId, queryEnabled = false } = route.params;
 
-  const { openScreen } = useOpenScreen();
+  const { openScreen, goBack } = useOpenScreen();
 
   const { data, isFetching, refetch } = useQuizDetailQuery({
     categoryId: category?.id ?? -1,
@@ -35,7 +36,7 @@ const QuizDetailScreen = ({ route }: Props) => {
     removeQuizBundle,
     generateQuizBundle,
     setter,
-    reset,
+    quizReset,
   } = useQuizBundle({ categoryId: category?.id, quizBundleId });
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -84,13 +85,14 @@ const QuizDetailScreen = ({ route }: Props) => {
   const handleRefetchQuiz = useCallback(() => {
     Alert.alert(
       '알림',
-      '현재까지 푼 문제가 초기화됩니다.\n계속해서 새로운 문제를 불러오시겠습니까?',
+      '현재까지 푼 문제가 모두 초기화됩니다.\n계속해서 새로운 문제를 불러오시겠습니까?',
       [
         {
           text: '네',
           onPress: () => {
             removeQuizBundle(quizBundle?.id ?? -1);
             refetch();
+            setSelectedIndex(null);
           },
           style: 'destructive',
         },
@@ -103,6 +105,29 @@ const QuizDetailScreen = ({ route }: Props) => {
     );
   }, [quizBundle?.id, refetch, removeQuizBundle]);
 
+  const handleGoBack = useCallback(() => {
+    if (quizBundle?.quizzes[0].selectedIndex === null) {
+      goBack();
+      return;
+    }
+
+    Alert.alert('알림', '현재까지 푼 문제가 모두 초기화됩니다.\n그래도 뒤로 가시겠습니까?', [
+      {
+        text: '네',
+        onPress: () => {
+          quizReset({ id: quizBundle?.id ?? -1, type: 'progress' });
+          goBack();
+        },
+        style: 'destructive',
+      },
+      {
+        text: '아니요',
+        onPress: () => {},
+        style: 'cancel',
+      },
+    ]);
+  }, [goBack, quizBundle?.id, quizBundle?.quizzes, quizReset]);
+
   useEffect(() => {
     const focusedQuizSelectedIndex =
       quizBundle?.quizzes[quizBundle.currentQuizzesIndex].selectedIndex;
@@ -111,7 +136,7 @@ const QuizDetailScreen = ({ route }: Props) => {
     }
   }, [quizBundle?.currentQuizzesIndex, quizBundle?.quizzes]);
 
-  // TODO : useQuizBundle 훅 내부로 옮길지 고민, 안옮겨도 될듯, 이 화면에서만 사용하는 것 같음
+  /** @description 최초로 문제를 불러올 때, 문제 번들을 생성하여 저장합니다. (중요한 로직) */
   useEffect(() => {
     if (
       category &&
@@ -134,6 +159,16 @@ const QuizDetailScreen = ({ route }: Props) => {
     pushQuizBundle,
   ]);
 
+  useFocusEffect(
+    useCallback(() => {
+      const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+        handleGoBack();
+        return true;
+      });
+      return () => subscription.remove();
+    }, [handleGoBack]),
+  );
+
   // console.log(
   //   category,
   //   getProgressingQuizBundleIndex(category?.id),
@@ -142,12 +177,13 @@ const QuizDetailScreen = ({ route }: Props) => {
   //   isFetching,
   //   data?.results.length,
   // );
-  console.log('1✅', JSON.stringify(quizBundle));
+  // console.log('1✅', JSON.stringify(quizBundle));
   // console.log('2✅', JSON.stringify(quizBundleList));
 
   return (
     <>
       <NavBackScreenHeader
+        onCustomGoBack={handleGoBack}
         headerCenter={
           <View style={styles.headerCenterBox}>
             <CLText type="Body3" color={color.GRAY_SCALE_7}>
@@ -168,8 +204,6 @@ const QuizDetailScreen = ({ route }: Props) => {
         <QuizDetailSkeleton />
       ) : (
         <>
-          <Button title="reset" onPress={reset} />
-
           <QuizContentContainer
             quizBundle={quizBundle}
             selectedIndex={selectedIndex}

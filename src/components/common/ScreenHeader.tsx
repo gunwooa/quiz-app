@@ -15,7 +15,7 @@ export type ScreenHeaderProps = {
   backgroundColor?: string;
 };
 
-const HEADER_HEIGHT = 44;
+const HEADER_HEIGHT = 56;
 
 const ScreenHeader: FC<ScreenHeaderProps> = ({ headerLeft, headerCenter, headerRight, style }) => {
   const insets = useSafeAreaInsets();

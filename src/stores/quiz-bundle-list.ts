@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { decode } from 'html-entities';
+import { DateTime } from 'luxon';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -7,16 +8,18 @@ import { Quiz, QuizCategory } from '../types';
 import { shuffle } from '../utils/common';
 
 export type QuizBundle = {
-  id: number;
-  status: 'progress' | 'again' | 'complete';
-  currentQuizzesIndex: number;
-  category: QuizCategory;
+  id: number; // 불변
+  category: QuizCategory; // 불변
+  status: 'progress' | 'again' | 'complete'; // 불변
+  currentQuizzesIndex: number; // 현재 풀고 있는 문제의 인덱스
+  createdAt: string; // 최초 문제를 생성한 시간, ISO format, 불변
+  completedAt: string | null; // 문제를 푼 시간, ISO format, 기록탭에서 정혈 할 때 필요, 다시 풀 때마다 바뀜
   quizzes: {
-    origin: Quiz;
-    options: string[];
-    answerIndex: number;
-    selectedIndex: number | null;
-    elapsedTimeInSeconds: number | null;
+    origin: Quiz; // 불변
+    options: string[]; // 보기, 다시 풀 때마다 바뀜
+    answerIndex: number; // 정답, 다시 풀 때마다 바뀜
+    selectedIndex: number | null; // 사용자가 선택한 답
+    elapsedTimeInSeconds: number | null; // 문제를 푸는데 걸린 시간(초), 다시 풀 때마다 바뀜, 모든 문제의 합은 총 걸린 시간
   }[];
 };
 
@@ -29,7 +32,8 @@ interface QuizBundleListStore {
   removeQuizBundle: (id: number) => void;
   setter: <K extends keyof QuizBundle>(id: number, key: K, value: QuizBundle[K]) => void;
 
-  reset: () => void;
+  allReset: () => void;
+  quizReset: ({ id, type }: { id: number; type: 'progress' | 'again' }) => void;
 }
 
 const useQuizBundleListStore = create<QuizBundleListStore>()(
@@ -62,19 +66,23 @@ const useQuizBundleListStore = create<QuizBundleListStore>()(
           };
 
           const options = shuffle([decodedQuiz.correct_answer, ...decodedQuiz.incorrect_answers]);
+          const answerIndex = options.indexOf(decodedQuiz.correct_answer);
           return {
             origin: decodedQuiz,
             options,
-            answerIndex: options.indexOf(decodedQuiz.correct_answer),
+            answerIndex,
             selectedIndex: null,
             elapsedTimeInSeconds: null,
           };
         });
+
         const quizBundle: QuizBundle = {
           id: get().createId(),
           category,
           status: 'progress',
           currentQuizzesIndex: 0,
+          createdAt: DateTime.now().toISO(),
+          completedAt: null,
           quizzes,
         };
         return quizBundle;
@@ -93,8 +101,37 @@ const useQuizBundleListStore = create<QuizBundleListStore>()(
         });
       },
 
-      reset: () => {
+      allReset: () => {
         set({ quizBundleList: [] });
+      },
+      quizReset: ({ id, type }) => {
+        set({
+          quizBundleList: get().quizBundleList.map((q) =>
+            q.id === id
+              ? {
+                  ...q,
+                  status: type,
+                  currentQuizzesIndex: 0,
+                  completedAt: null,
+                  quizzes: q.quizzes.map((quiz) => {
+                    /** @description 다시 풀 때마다 보기 순서가 바뀌어야 하므로 options를 다시 섞어줌 */
+                    const options = shuffle([
+                      quiz.origin.correct_answer,
+                      ...quiz.origin.incorrect_answers,
+                    ]);
+                    const answerIndex = options.indexOf(quiz.origin.correct_answer);
+                    return {
+                      ...quiz,
+                      options,
+                      answerIndex,
+                      selectedIndex: null,
+                      elapsedTimeInSeconds: null,
+                    };
+                  }),
+                }
+              : q,
+          ),
+        });
       },
     }),
 

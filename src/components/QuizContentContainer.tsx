@@ -72,9 +72,11 @@ const QuizContentContainer: FC<QuizContentContainerProps> = ({
 }) => {
   const focusedQuiz = quizBundle?.quizzes[quizBundle.currentQuizzesIndex];
 
-  console.log('❌', focusedQuiz?.selectedIndex, selectedIndex);
-
   const isSuccess = focusedQuiz?.selectedIndex === focusedQuiz?.answerIndex;
+
+  if (!quizBundle) {
+    return <></>;
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
