@@ -3,6 +3,7 @@ import { Alert, BackHandler, StyleSheet, TouchableOpacity, View } from 'react-na
 
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { DateTime } from 'luxon';
 
 import useGenerateQuizBundleQuery from './useGenerateQuizBundleQuery';
 import CLText from '../components/common/CLText';
@@ -38,15 +39,35 @@ const QuizDetailScreen = ({ route }: Props) => {
   });
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [seconds, setSeconds] = useState(0);
+  const [isActive, setIsActive] = useState(false);
 
   const currentQuizzesIndex = useMemo(
     () => quizBundle?.currentQuizzesIndex ?? 0,
     [quizBundle?.currentQuizzesIndex],
   );
 
+  const isLastQuiz = useMemo(
+    () => currentQuizzesIndex === (quizBundle?.quizzes.length ?? 0) - 1,
+    [currentQuizzesIndex, quizBundle?.quizzes.length],
+  );
+
   const handleChangeSelectedIndex = useCallback((index: number | null) => {
     setSelectedIndex(index);
   }, []);
+
+  const handleStartTimer = useCallback(() => {
+    setIsActive(true);
+  }, []);
+
+  const handlePauseTimer = useCallback(() => {
+    setIsActive(false);
+  }, []);
+
+  const handleResetTimer = useCallback(() => {
+    handlePauseTimer();
+    setSeconds(0);
+  }, [handlePauseTimer]);
 
   const handlePressPrevButton = useCallback(() => {
     if (!quizBundle) {
@@ -61,15 +82,16 @@ const QuizDetailScreen = ({ route }: Props) => {
       return;
     }
 
-    const isLastQuiz = currentQuizzesIndex === quizBundle.quizzes.length - 1;
     if (isLastQuiz) {
       openScreen('replace', 'RecordDetail', { quizBundleId: quizBundle?.id });
       setter(quizBundle.id, 'status', 'complete');
+      setter(quizBundle.id, 'elapsedTimeInSeconds', seconds);
+      setter(quizBundle.id, 'completedAt', DateTime.now().toISO());
     } else {
       setter(quizBundle.id, 'currentQuizzesIndex', currentQuizzesIndex + 1);
       setSelectedIndex(null);
     }
-  }, [currentQuizzesIndex, openScreen, quizBundle, setter]);
+  }, [currentQuizzesIndex, isLastQuiz, openScreen, quizBundle, seconds, setter]);
 
   const handleCheckAnswer = useCallback(() => {
     if (!quizBundle) {
@@ -78,7 +100,11 @@ const QuizDetailScreen = ({ route }: Props) => {
     const updatedQuizzes = [...quizBundle.quizzes];
     updatedQuizzes[currentQuizzesIndex].selectedIndex = selectedIndex;
     setter(quizBundle.id, 'quizzes', updatedQuizzes);
-  }, [currentQuizzesIndex, quizBundle, selectedIndex, setter]);
+
+    if (isLastQuiz) {
+      handlePauseTimer();
+    }
+  }, [currentQuizzesIndex, handlePauseTimer, isLastQuiz, quizBundle, selectedIndex, setter]);
 
   const handleRefetchQuiz = useCallback(() => {
     Alert.alert(
@@ -91,6 +117,7 @@ const QuizDetailScreen = ({ route }: Props) => {
             removeQuizBundle(quizBundle?.id ?? -1);
             refetch();
             setSelectedIndex(null);
+            handleResetTimer();
           },
           style: 'destructive',
         },
@@ -101,7 +128,7 @@ const QuizDetailScreen = ({ route }: Props) => {
         },
       ],
     );
-  }, [quizBundle?.id, refetch, removeQuizBundle]);
+  }, [handleResetTimer, quizBundle?.id, refetch, removeQuizBundle]);
 
   const handleGoBack = useCallback(() => {
     if (quizBundle?.quizzes[0].selectedIndex === null) {
@@ -125,6 +152,12 @@ const QuizDetailScreen = ({ route }: Props) => {
       },
     ]);
   }, [goBack, quizBundle?.quizzes]);
+
+  useEffect(() => {
+    if (!isFetching) {
+      handleStartTimer();
+    }
+  }, [handleStartTimer, isFetching]);
 
   useEffect(() => {
     const focusedQuizSelectedIndex =
@@ -174,6 +207,9 @@ const QuizDetailScreen = ({ route }: Props) => {
           <QuizContentContainer
             quizBundle={quizBundle}
             selectedIndex={selectedIndex}
+            seconds={seconds}
+            isActive={isActive}
+            setSeconds={setSeconds}
             onChangeSelectedIndex={handleChangeSelectedIndex}
           />
 

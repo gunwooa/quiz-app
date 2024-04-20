@@ -2,12 +2,16 @@ import React, { FC, useMemo } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import CLText from './common/CLText';
+import QuizTimer from './QuizTimer';
 import { QuizBundle } from '../stores/quiz-bundle-list';
 import { color } from '../styles/color';
 
 type QuizContentContainerProps = {
   quizBundle?: QuizBundle;
   selectedIndex: number | null;
+  seconds: number;
+  isActive: boolean;
+  setSeconds: React.Dispatch<React.SetStateAction<number>>;
   onChangeSelectedIndex: (index: number | null) => void;
 };
 
@@ -68,10 +72,12 @@ const SelectButton: FC<{
 const QuizContentContainer: FC<QuizContentContainerProps> = ({
   quizBundle,
   selectedIndex,
+  seconds,
+  isActive,
+  setSeconds,
   onChangeSelectedIndex,
 }) => {
   const focusedQuiz = quizBundle?.quizzes[quizBundle.currentQuizzesIndex];
-
   const isSuccess = focusedQuiz?.selectedIndex === focusedQuiz?.answerIndex;
 
   if (!quizBundle) {
@@ -80,17 +86,19 @@ const QuizContentContainer: FC<QuizContentContainerProps> = ({
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      <QuizTimer seconds={seconds} isActive={isActive} setSeconds={setSeconds} />
+
       <View style={styles.infoBox}>
         <CLText type="Body4" color={color.GRAY_SCALE_5}>
           문제 {(quizBundle?.currentQuizzesIndex ?? 0) + 1}
         </CLText>
-        <CLText type="Body4" color={color.GRAY_SCALE_6}>
+        <CLText type="Body4" color={color.GRAY_SCALE_5}>
           난이도 :{' '}
           {focusedQuiz?.origin.difficulty && QUIZ_DIFFICULTY[focusedQuiz?.origin.difficulty]}
         </CLText>
       </View>
 
-      <CLText type="H4" color={color.GRAY_SCALE_7} mt={12}>
+      <CLText type="H4" color={color.GRAY_SCALE_7} mt={20} ml={24} mr={24}>
         {focusedQuiz?.origin.question}
       </CLText>
 
@@ -139,17 +147,17 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: color.WHITE,
   },
-  contentContainer: {
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-  },
+  contentContainer: {},
   infoBox: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 24,
+    paddingHorizontal: 24,
   },
   optionBox: {
-    marginTop: 24,
     gap: 12,
+    marginTop: 32,
+    paddingHorizontal: 24,
   },
   selectButton: {
     paddingVertical: 16,
@@ -162,6 +170,7 @@ const styles = StyleSheet.create({
   resultBox: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 40,
+    paddingHorizontal: 24,
   },
 });

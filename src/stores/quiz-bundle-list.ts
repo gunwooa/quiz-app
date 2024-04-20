@@ -10,16 +10,16 @@ import { shuffle } from '../utils/common';
 export type QuizBundle = {
   id: number; // 불변
   category: QuizCategory; // 불변
-  status: 'progress' | 'again' | 'complete'; // 불변
+  status: 'progress' | 'again' | 'complete';
   currentQuizzesIndex: number; // 현재 풀고 있는 문제의 인덱스
   createdAt: string; // 최초 문제를 생성한 시간, ISO format, 불변
   completedAt: string | null; // 문제를 푼 시간, ISO format, 기록탭에서 정혈 할 때 필요, 다시 풀 때마다 바뀜
+  elapsedTimeInSeconds: number | null; // 문제를 모두 푸는데 걸린 시간(초)
   quizzes: {
     origin: Quiz; // 불변
     options: string[]; // 보기, 다시 풀 때마다 바뀜
     answerIndex: number; // 정답, 다시 풀 때마다 바뀜
     selectedIndex: number | null; // 사용자가 선택한 답
-    elapsedTimeInSeconds: number | null; // 문제를 푸는데 걸린 시간(초), 다시 풀 때마다 바뀜, 모든 문제의 합은 총 걸린 시간
   }[];
 };
 
@@ -72,7 +72,6 @@ const useQuizBundleListStore = create<QuizBundleListStore>()(
             options,
             answerIndex,
             selectedIndex: null,
-            elapsedTimeInSeconds: null,
           };
         });
 
@@ -83,6 +82,7 @@ const useQuizBundleListStore = create<QuizBundleListStore>()(
           currentQuizzesIndex: 0,
           createdAt: DateTime.now().toISO(),
           completedAt: null,
+          elapsedTimeInSeconds: null,
           quizzes,
         };
         return quizBundle;
@@ -113,6 +113,7 @@ const useQuizBundleListStore = create<QuizBundleListStore>()(
                   status: type,
                   currentQuizzesIndex: 0,
                   completedAt: null,
+                  elapsedTimeInSeconds: null,
                   quizzes: q.quizzes.map((quiz) => {
                     /** @description 다시 풀 때마다 보기 순서가 바뀌어야 하므로 options를 다시 섞어줌 */
                     const options = shuffle([
@@ -125,7 +126,6 @@ const useQuizBundleListStore = create<QuizBundleListStore>()(
                       options,
                       answerIndex,
                       selectedIndex: null,
-                      elapsedTimeInSeconds: null,
                     };
                   }),
                 }
