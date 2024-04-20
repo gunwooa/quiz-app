@@ -4,7 +4,7 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 import { CATEGORY_ITEM_HEIGHT } from './QuizCategoryListItem';
 
-const QuizCategorySkeleton: FC = () => {
+const QuizMainTabSkeleton: FC = () => {
   return (
     <>
       <SkeletonPlaceholder borderRadius={10}>
@@ -18,4 +18,4 @@ const QuizCategorySkeleton: FC = () => {
   );
 };
 
-export default QuizCategorySkeleton;
+export default QuizMainTabSkeleton;

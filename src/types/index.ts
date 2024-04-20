@@ -20,3 +20,7 @@ export type QuizResponse = {
   response_code: 0 | 1 | 2 | 3 | 4 | 5;
   results: Quiz[];
 };
+
+export enum ObserverKey {
+  QuizRefetchCall = 'quiz-refetch-call',
+}

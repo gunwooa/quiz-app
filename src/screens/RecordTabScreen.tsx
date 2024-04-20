@@ -11,7 +11,7 @@ import useQuizBundle from '../hooks/useQuizBundle';
 import { ScreenParamList } from '../routes/NavigationContainer';
 import { QuizBundle } from '../stores/quiz-bundle-list';
 
-type Props = NativeStackScreenProps<ScreenParamList>;
+type Props = NativeStackScreenProps<ScreenParamList, 'RecordTab'>;
 
 const SCREEN_NAME = {
   again: 'QuizDetail',
@@ -43,7 +43,6 @@ const RecordTabScreen = ({}: Props) => {
 
       <FlatList
         data={quizBundleList.filter((q) => q.status !== 'progress')}
-        // data={quizBundleList}
         renderItem={({ item }) => {
           return (
             <QuizRecordListItem

@@ -13,11 +13,10 @@ const useGenerateQuizBundleQuery = ({
   quizBundleId?: number;
   queryEnabled: boolean;
 }) => {
-  const { data, isFetching } = useQuizDetailQuery({
+  const { data, isFetching, ...rest } = useQuizDetailQuery({
     categoryId: category?.id ?? -1,
     quizBundleId,
     enabled: queryEnabled,
-    gcTime: 0,
   });
 
   const { getProgressingQuizBundleIndex, generateQuizBundle, pushQuizBundle } =
@@ -45,6 +44,12 @@ const useGenerateQuizBundleQuery = ({
     isFetching,
     pushQuizBundle,
   ]);
+
+  return {
+    data,
+    isFetching,
+    ...rest,
+  };
 };
 
 export default useGenerateQuizBundleQuery;

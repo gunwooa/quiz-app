@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TextProps } from 'react-native';
 
-// mt, mb, ml, mr 을 props로 받아서 margin을 적용할 수 있도록 구현 해줘
+import { color } from '~/src/styles/color';
 
 type TextStyleTypes =
   | 'H1'
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
 
 const CLText: React.FC<CLTextProps> = ({
   type,
-  color,
+  color: _color = color.BLACK,
   textAlign,
   mt,
   mb,
@@ -59,7 +59,7 @@ const CLText: React.FC<CLTextProps> = ({
       style={[
         styles[type],
         {
-          color,
+          color: _color,
           textAlign,
           marginTop: mt,
           marginBottom: mb,

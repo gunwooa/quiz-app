@@ -1,19 +1,18 @@
-import React, { FC, useMemo } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { FC, ReactNode, useMemo } from 'react';
+import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import CLText from './common/CLText';
-import QuizTimer from './QuizTimer';
 import { QuizBundle } from '../stores/quiz-bundle-list';
 import { color } from '../styles/color';
 
-type QuizContentContainerProps = {
+type QuizContentBoxProps = {
   quizBundle?: QuizBundle;
   selectedIndex: number | null;
-  seconds: number;
-  isActive: boolean;
-  setSeconds: React.Dispatch<React.SetStateAction<number>>;
+  ListHeaderComponent?: ReactNode;
   onChangeSelectedIndex: (index: number | null) => void;
 };
+
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const QUIZ_DIFFICULTY = {
   easy: '쉬움 😄',
@@ -69,12 +68,10 @@ const SelectButton: FC<{
   );
 };
 
-const QuizContentContainer: FC<QuizContentContainerProps> = ({
+const QuizContentBox: FC<QuizContentBoxProps> = ({
   quizBundle,
   selectedIndex,
-  seconds,
-  isActive,
-  setSeconds,
+  ListHeaderComponent,
   onChangeSelectedIndex,
 }) => {
   const focusedQuiz = quizBundle?.quizzes[quizBundle.currentQuizzesIndex];
@@ -85,8 +82,11 @@ const QuizContentContainer: FC<QuizContentContainerProps> = ({
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <QuizTimer seconds={seconds} isActive={isActive} setSeconds={setSeconds} />
+    <ScrollView
+      contentContainerStyle={styles.contentContainer}
+      stickyHeaderIndices={[0]}
+      showsVerticalScrollIndicator={false}>
+      {ListHeaderComponent && ListHeaderComponent}
 
       <View style={styles.infoBox}>
         <CLText type="Body4" color={color.GRAY_SCALE_5}>
@@ -141,13 +141,14 @@ const QuizContentContainer: FC<QuizContentContainerProps> = ({
   );
 };
 
-export default QuizContentContainer;
+export default QuizContentBox;
 
 const styles = StyleSheet.create({
-  container: {
+  contentContainer: {
     backgroundColor: color.WHITE,
+    flexGrow: 1,
+    paddingBottom: SCREEN_HEIGHT * 0.2,
   },
-  contentContainer: {},
   infoBox: {
     flexDirection: 'row',
     justifyContent: 'space-between',
