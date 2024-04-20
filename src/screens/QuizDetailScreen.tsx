@@ -4,6 +4,7 @@ import { Alert, BackHandler, StyleSheet, TouchableOpacity, View } from 'react-na
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import useGenerateQuizBundleQuery from './useGenerateQuizBundleQuery';
 import CLText from '../components/common/CLText';
 import NavBackScreenHeader from '../components/common/NavBackScreenHeader';
 import QuizContentContainer from '../components/QuizContentContainer';
@@ -22,22 +23,19 @@ const QuizDetailScreen = ({ route }: Props) => {
 
   const { openScreen, goBack } = useOpenScreen();
 
-  const { data, isFetching, refetch } = useQuizDetailQuery({
+  useGenerateQuizBundleQuery({ category, quizBundleId, queryEnabled });
+
+  const { isFetching, refetch } = useQuizDetailQuery({
     categoryId: category?.id ?? -1,
     quizBundleId,
     enabled: queryEnabled,
     gcTime: 0,
   });
 
-  const {
-    quizBundle,
-    getProgressingQuizBundleIndex,
-    pushQuizBundle,
-    removeQuizBundle,
-    generateQuizBundle,
-    setter,
-    quizReset,
-  } = useQuizBundle({ categoryId: category?.id, quizBundleId });
+  const { quizBundle, removeQuizBundle, setter } = useQuizBundle({
+    categoryId: category?.id,
+    quizBundleId,
+  });
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
@@ -115,8 +113,8 @@ const QuizDetailScreen = ({ route }: Props) => {
       {
         text: '네',
         onPress: () => {
-          quizReset({ id: quizBundle?.id ?? -1, type: 'progress' });
           goBack();
+          // reset 은 화면으로 들어 오는 시점에 초기화 함, 이유는 앱을 메모리에서 날려버렸을때를 대비해서임
         },
         style: 'destructive',
       },
@@ -126,7 +124,7 @@ const QuizDetailScreen = ({ route }: Props) => {
         style: 'cancel',
       },
     ]);
-  }, [goBack, quizBundle?.id, quizBundle?.quizzes, quizReset]);
+  }, [goBack, quizBundle?.quizzes]);
 
   useEffect(() => {
     const focusedQuizSelectedIndex =
@@ -135,29 +133,6 @@ const QuizDetailScreen = ({ route }: Props) => {
       setSelectedIndex(focusedQuizSelectedIndex);
     }
   }, [quizBundle?.currentQuizzesIndex, quizBundle?.quizzes]);
-
-  /** @description 최초로 문제를 불러올 때, 문제 번들을 생성하여 저장합니다. (중요한 로직) */
-  useEffect(() => {
-    if (
-      category &&
-      getProgressingQuizBundleIndex(category.id) === -1 &&
-      !isFetching &&
-      data?.results
-    ) {
-      const _quizBundle = generateQuizBundle({
-        category,
-        originQuizzes: data?.results ?? [],
-      });
-      pushQuizBundle(_quizBundle);
-    }
-  }, [
-    category,
-    data?.results,
-    generateQuizBundle,
-    getProgressingQuizBundleIndex,
-    isFetching,
-    pushQuizBundle,
-  ]);
 
   useFocusEffect(
     useCallback(() => {
@@ -169,15 +144,7 @@ const QuizDetailScreen = ({ route }: Props) => {
     }, [handleGoBack]),
   );
 
-  // console.log(
-  //   category,
-  //   getProgressingQuizBundleIndex(category?.id),
-  //   quizBundle?.id,
-  //   '🔥',
-  //   isFetching,
-  //   data?.results.length,
-  // );
-  // console.log('1✅', JSON.stringify(quizBundle));
+  console.log('1✅', JSON.stringify(quizBundle));
   // console.log('2✅', JSON.stringify(quizBundleList));
 
   return (

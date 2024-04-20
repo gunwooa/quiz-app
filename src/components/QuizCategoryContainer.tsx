@@ -13,14 +13,17 @@ type QuizCategoryContainerProps = {};
 const QuizCategoryContainer: FC<QuizCategoryContainerProps> = () => {
   const { openScreen } = useOpenScreen();
   const { data: categories } = useQuizCategoriesQuery();
-  const { getProgressingQuizBundleIndex } = useQuizBundle({});
+  const { getProgressingQuizBundleIndex, quizReset, quizBundleList } = useQuizBundle({});
 
   const handlePressCategory = useCallback(
     (category: QuizCategory) => {
+      const quizBundle = quizBundleList[getProgressingQuizBundleIndex(category.id)];
+      quizReset({ id: quizBundle?.id ?? -1, type: 'progress' });
+
       const queryEnabled = getProgressingQuizBundleIndex(category.id) === -1;
       openScreen('push', 'QuizDetail', { category, queryEnabled });
     },
-    [getProgressingQuizBundleIndex, openScreen],
+    [getProgressingQuizBundleIndex, openScreen, quizBundleList, quizReset],
   );
 
   return (

@@ -14,20 +14,25 @@ import { QuizBundle } from '../stores/quiz-bundle-list';
 type Props = NativeStackScreenProps<ScreenParamList>;
 
 const SCREEN_NAME = {
-  progress: 'QuizDetail',
   again: 'QuizDetail',
   complete: 'RecordDetail',
 } as const;
 
 const RecordTabScreen = ({}: Props) => {
-  const { quizBundleList } = useQuizBundle({});
+  const { quizBundleList, quizReset } = useQuizBundle({});
   const { openScreen } = useOpenScreen();
 
   const handlePressCategory = useCallback(
     (quizBundle: QuizBundle) => {
-      openScreen('push', SCREEN_NAME[quizBundle.status], { quizBundleId: quizBundle.id });
+      if (quizBundle.status === 'again') {
+        quizReset({ id: quizBundle?.id ?? -1, type: 'again' });
+      }
+
+      openScreen('push', SCREEN_NAME[quizBundle.status as 'again' | 'complete'], {
+        quizBundleId: quizBundle.id,
+      });
     },
-    [openScreen],
+    [openScreen, quizReset],
   );
 
   console.log('🐾 RecordTabScreen ', quizBundleList.length);
