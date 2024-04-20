@@ -20,6 +20,7 @@ type TextStyleTypes =
 type CLTextProps = {
   type: TextStyleTypes;
   color?: string;
+  textAlign?: 'left' | 'center' | 'right';
   mt?: number;
   mb?: number;
   ml?: number;
@@ -31,8 +32,8 @@ const styles = StyleSheet.create({
   H2: { fontSize: 28, fontWeight: 'bold' },
   H3: { fontSize: 24, fontWeight: '600' },
   H4: { fontSize: 20, fontWeight: '600' },
-  Body1: { fontSize: 18, fontWeight: '600' },
-  Body2: { fontSize: 16, fontWeight: '600' },
+  Body1: { fontSize: 18, fontWeight: 'bold' },
+  Body2: { fontSize: 16, fontWeight: 'bold' },
   Body3: { fontSize: 14, fontWeight: '600' },
   Body4: { fontSize: 12, fontWeight: '600' },
   Caption1: { fontSize: 12, fontWeight: 'normal' },
@@ -44,6 +45,7 @@ const styles = StyleSheet.create({
 const CLText: React.FC<CLTextProps> = ({
   type,
   color,
+  textAlign,
   mt,
   mb,
   ml,
@@ -58,10 +60,12 @@ const CLText: React.FC<CLTextProps> = ({
         styles[type],
         {
           color,
+          textAlign,
           marginTop: mt,
           marginBottom: mb,
           marginLeft: ml,
           marginRight: mr,
+          lineHeight: styles[type].fontSize * 1.3,
         },
         style,
       ]}

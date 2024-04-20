@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
-import { CATEGORY_ITEM_HEIGHT } from './QuizCategoryItem';
+import { CATEGORY_ITEM_HEIGHT } from './QuizCategoryListItem';
 
 const QuizCategorySkeleton: FC = () => {
   return (

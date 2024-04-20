@@ -9,9 +9,11 @@ import { ScreenParamList } from '~/src/routes/NavigationContainer';
 import CLIcon from './CLIcon';
 import ScreenHeader, { ScreenHeaderProps } from './ScreenHeader';
 
-type NavBackScreenHeaderProps = {} & Omit<ScreenHeaderProps, 'headerLeft'>;
+type NavBackScreenHeaderProps = {
+  onCustomGoBack?: () => void;
+} & Omit<ScreenHeaderProps, 'headerLeft'>;
 
-const NavBackScreenHeader: FC<NavBackScreenHeaderProps> = (props) => {
+const NavBackScreenHeader: FC<NavBackScreenHeaderProps> = ({ onCustomGoBack, ...props }) => {
   const navigation = useNavigation<NativeStackNavigationProp<ScreenParamList>>();
 
   return (
@@ -21,7 +23,7 @@ const NavBackScreenHeader: FC<NavBackScreenHeaderProps> = (props) => {
           icon="NavBack"
           containerStyle={styles.iconContainer}
           onPress={() => {
-            navigation.goBack();
+            onCustomGoBack ? onCustomGoBack() : navigation.goBack();
           }}
         />
       }

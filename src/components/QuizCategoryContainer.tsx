@@ -2,21 +2,28 @@ import React, { FC, useCallback } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 
 import useOpenScreen from '~/src/hooks/useOpenScreen';
+import { QuizCategory } from '~/src/types';
 
-import QuizCategoryItem from './QuizCategoryItem';
-import useQuizCategoriesQuery from '../../hooks/useQuizCategoriesQuery';
+import QuizCategoryListItem from './QuizCategoryListItem';
+import useQuizBundle from '../hooks/useQuizBundle';
+import useQuizCategoriesQuery from '../hooks/useQuizCategoriesQuery';
 
 type QuizCategoryContainerProps = {};
 
 const QuizCategoryContainer: FC<QuizCategoryContainerProps> = () => {
   const { openScreen } = useOpenScreen();
   const { data: categories } = useQuizCategoriesQuery();
+  const { getProgressingQuizBundleIndex, quizReset, quizBundleList } = useQuizBundle({});
 
   const handlePressCategory = useCallback(
-    (id: number) => {
-      openScreen('push', 'QuizDetail', { id });
+    (category: QuizCategory) => {
+      const quizBundle = quizBundleList[getProgressingQuizBundleIndex(category.id)];
+      quizReset({ id: quizBundle?.id ?? -1, type: 'progress' });
+
+      const queryEnabled = getProgressingQuizBundleIndex(category.id) === -1;
+      openScreen('push', 'QuizDetail', { category, queryEnabled });
     },
-    [openScreen],
+    [getProgressingQuizBundleIndex, openScreen, quizBundleList, quizReset],
   );
 
   return (
@@ -25,10 +32,10 @@ const QuizCategoryContainer: FC<QuizCategoryContainerProps> = () => {
         data={categories}
         renderItem={({ item }) => {
           return (
-            <QuizCategoryItem
+            <QuizCategoryListItem
               category={item}
               onPress={() => {
-                handlePressCategory(item.id);
+                handlePressCategory(item);
               }}
             />
           );
