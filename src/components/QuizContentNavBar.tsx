@@ -80,17 +80,29 @@ const QuizContentNavBar: FC<QuizContentNavBarProps> = ({
           <CLButton
             type="outlined"
             size="medium"
-            title={currentQuizzesIndex < quizTotalCount - 1 ? '다음문제' : '결과보기'}
+            title={
+              currentQuizzesIndex < quizTotalCount - 1
+                ? '다음문제'
+                : quizBundle?.status === 'complete'
+                ? '다음문제'
+                : '결과보기'
+            }
             color="grey"
             borderRadius={20}
-            disabled={selectedIndex === null}
+            disabled={
+              currentQuizzesIndex === quizTotalCount - 1 && quizBundle?.status === 'complete'
+            }
             style={styles.navButton}
             rightArea={
               <CLIcon
                 icon="ArrowRightGray"
                 width={14}
                 height={14}
-                stroke={selectedIndex === null ? color.GRAY_SCALE_3 : color.GRAY_SCALE_7}
+                stroke={
+                  currentQuizzesIndex === quizTotalCount - 1 && quizBundle?.status === 'complete'
+                    ? color.GRAY_SCALE_3
+                    : color.GRAY_SCALE_7
+                }
               />
             }
             onPress={onPressNextButton}

@@ -5,6 +5,8 @@ import { DateTime } from 'luxon';
 
 import QuizContentBox from './QuizContentBox';
 import QuizContentNavBar from './QuizContentNavBar';
+import QuizTimer from './QuizTimer';
+import QuizTotalIndicator from './QuizTotalIndicator';
 import useOpenScreen from '../hooks/useOpenScreen';
 import useQuizBundle from '../hooks/useQuizBundle';
 import useQuizDetailQuery from '../hooks/useQuizDetailQuery';
@@ -148,9 +150,13 @@ const QuizContainer: FC<QuizContainerProps> = ({ category, quizBundleId }) => {
       <QuizContentBox
         quizBundle={quizBundle}
         selectedIndex={selectedIndex}
-        seconds={seconds}
-        isActive={isActive}
-        setSeconds={setSeconds}
+        ListHeaderComponent={
+          quizBundle?.status === 'complete' ? (
+            <QuizTotalIndicator quizBundleId={quizBundleId} />
+          ) : (
+            <QuizTimer seconds={seconds} isActive={isActive} setSeconds={setSeconds} />
+          )
+        }
         onChangeSelectedIndex={handleChangeSelectedIndex}
       />
 
