@@ -63,18 +63,20 @@ const QuizReportContainer: FC<QuizReportBoxProps> = ({ quizBundleId }) => {
               stroke={color.GRAY_SCALE_1}
               strokeWidth={stroke}
             />
-            <Circle
-              cx={svgSize / 2}
-              cy={svgSize / 2}
-              r={radius}
-              fill="none"
-              stroke={getGrade(percentage).color}
-              strokeWidth={stroke}
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              transform={`rotate(-90 ${svgSize / 2} ${svgSize / 2})`}
-            />
+            {percentage > 0 && (
+              <Circle
+                cx={svgSize / 2}
+                cy={svgSize / 2}
+                r={radius}
+                fill="none"
+                stroke={getGrade(percentage).color}
+                strokeWidth={stroke}
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                transform={`rotate(-90 ${svgSize / 2} ${svgSize / 2})`}
+              />
+            )}
           </Svg>
 
           <View style={styles.circleTextBox}>
