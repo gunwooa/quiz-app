@@ -21,18 +21,18 @@ const SVG = {
 
 export type CLIconProps = {
   icon: keyof typeof SVG;
-  containerStyle?: ViewStyle;
+  buttonStyle?: ViewStyle;
   onPress?: () => void;
 } & SvgProps;
 
-const CLIcon: FC<CLIconProps> = ({ icon, containerStyle, onPress, ...props }) => {
+const CLIcon: FC<CLIconProps> = ({ icon, buttonStyle, onPress, ...props }) => {
   const Icon = useMemo(() => SVG[icon], [icon]);
   return onPress ? (
-    <TouchableOpacity onPress={onPress} style={containerStyle}>
-      <Icon {...props} />
+    <TouchableOpacity testID={`cl-icon-button-${icon}`} onPress={onPress} style={buttonStyle}>
+      <Icon testID={`cl-icon-${icon}`} {...props} />
     </TouchableOpacity>
   ) : (
-    <Icon {...props} />
+    <Icon testID={`cl-icon-${icon}`} {...props} />
   );
 };
 

@@ -21,7 +21,7 @@ const NavBackScreenHeader: FC<NavBackScreenHeaderProps> = ({ onCustomGoBack, ...
       headerLeft={
         <CLIcon
           icon="NavBack"
-          containerStyle={styles.iconContainer}
+          buttonStyle={styles.iconContainer}
           onPress={() => {
             onCustomGoBack ? onCustomGoBack() : navigation.goBack();
           }}
