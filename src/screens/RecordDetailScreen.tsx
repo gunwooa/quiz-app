@@ -37,7 +37,7 @@ const RecordDetailScreen = ({ route }: Props) => {
   }, []);
 
   const handleAgainQuiz = useCallback(() => {
-    Alert.alert('알림', '기록이 모두 초기화됩니다.\n그래도 다시 푸시겠습니까?', [
+    Alert.alert('알림', '퀴즈 기록이 초기화됩니다.\n그래도 다시 푸시겠습니까?', [
       {
         text: '네',
         onPress: () => {

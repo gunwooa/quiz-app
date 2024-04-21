@@ -17,7 +17,7 @@ const RecordTabScreen = ({}: Props) => {
   const { quizBundleReset } = useQuizBundle({});
 
   const handleReset = useCallback(() => {
-    Alert.alert('알림', '기록이 모두 초기화됩니다.\n그래도 초기화 하시겠습니까?', [
+    Alert.alert('알림', '모든 퀴즈 기록이 초기화됩니다.\n그래도 초기화 하시겠습니까?', [
       {
         text: '네',
         onPress: () => {

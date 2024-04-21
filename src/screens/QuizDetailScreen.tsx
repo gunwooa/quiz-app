@@ -40,7 +40,7 @@ const QuizDetailScreen = ({ route }: Props) => {
       return;
     }
 
-    Alert.alert('알림', '현재까지 푼 문제가 모두 초기화됩니다.\n그래도 뒤로 가시겠습니까?', [
+    Alert.alert('알림', '현재까지 푼 퀴즈가 모두 초기화됩니다.\n그래도 뒤로 가시겠습니까?', [
       {
         text: '네',
         onPress: () => {

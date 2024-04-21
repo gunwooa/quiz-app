@@ -110,7 +110,7 @@ const QuizContainer: FC<QuizContainerProps> = ({ category, quizBundleId }) => {
   const handleRefetchQuiz = useCallback(() => {
     Alert.alert(
       '알림',
-      '현재까지 푼 문제가 모두 초기화됩니다.\n계속해서 새로운 문제를 불러오시겠습니까?',
+      '현재까지 푼 퀴즈가 모두 초기화됩니다.\n계속해서 새로운 퀴즈를 불러오시겠습니까?',
       [
         {
           text: '네',
