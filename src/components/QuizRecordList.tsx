@@ -1,12 +1,15 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Dimensions, SectionList, StyleSheet, View } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DateTime } from 'luxon';
 
 import CLText from './common/CLText';
 import QuizRecordListItem from './QuizRecordListItem';
-import useOpenScreen from '../hooks/useOpenScreen';
+import { usePreventDoubleClick } from '../hooks/usePreventDoubleClick';
 import useQuizBundle from '../hooks/useQuizBundle';
+import { ScreenParamList } from '../routes/NavigationContainer';
 import { QuizBundle } from '../stores/quiz-bundle-list';
 import { color } from '../styles/color';
 
@@ -20,8 +23,9 @@ const SCREEN_NAME = {
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const QuizRecordList: FC<QuizRecordListProps> = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<ScreenParamList>>();
+  const { preventDoubleClick } = usePreventDoubleClick();
   const { quizBundleList, quizReset } = useQuizBundle({});
-  const { openScreen } = useOpenScreen();
 
   console.log('🐾 RecordTabScreen ', quizBundleList.length);
 
@@ -55,18 +59,15 @@ const QuizRecordList: FC<QuizRecordListProps> = () => {
     [quizBundleList],
   );
 
-  const handlePressCategory = useCallback(
-    (quizBundle: QuizBundle) => {
-      if (quizBundle.status === 'again') {
-        quizReset({ id: quizBundle?.id ?? -1, type: 'again' });
-      }
+  const handlePressCategory = preventDoubleClick((quizBundle: QuizBundle) => {
+    if (quizBundle.status === 'again') {
+      quizReset({ id: quizBundle?.id ?? -1, type: 'again' });
+    }
 
-      openScreen('push', SCREEN_NAME[quizBundle.status as 'again' | 'complete'], {
-        quizBundleId: quizBundle.id,
-      });
-    },
-    [openScreen, quizReset],
-  );
+    navigation.push(SCREEN_NAME[quizBundle.status as 'again' | 'complete'], {
+      quizBundleId: quizBundle.id,
+    });
+  });
 
   return (
     <View>

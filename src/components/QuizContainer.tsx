@@ -1,15 +1,17 @@
 import React, { FC, useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { Alert } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DateTime } from 'luxon';
 
 import QuizContentBox from './QuizContentBox';
 import QuizContentNavBar from './QuizContentNavBar';
 import QuizTimer from './QuizTimer';
 import QuizTotalIndicator from './QuizTotalIndicator';
-import useOpenScreen from '../hooks/useOpenScreen';
 import useQuizBundle from '../hooks/useQuizBundle';
 import useQuizDetailQuery from '../hooks/useQuizDetailQuery';
+import { ScreenParamList } from '../routes/NavigationContainer';
 import { useObserverStore } from '../stores/observer';
 import { ObserverKey, QuizCategory } from '../types';
 
@@ -19,7 +21,7 @@ type QuizContainerProps = {
 };
 
 const QuizContainer: FC<QuizContainerProps> = ({ category, quizBundleId }) => {
-  const { openScreen } = useOpenScreen();
+  const navigation = useNavigation<NativeStackNavigationProp<ScreenParamList>>();
   const { add, remove } = useObserverStore();
 
   const { refetch } = useQuizDetailQuery({
@@ -79,7 +81,10 @@ const QuizContainer: FC<QuizContainerProps> = ({ category, quizBundleId }) => {
     }
 
     if (isLastQuiz) {
-      openScreen('replace', 'RecordDetail', { quizBundleId: quizBundle?.id });
+      navigation.popToTop();
+      navigation.navigate('RecordTab');
+      navigation.navigate('RecordDetail', { quizBundleId: quizBundle?.id });
+
       setter(quizBundle.id, 'status', 'complete');
       setter(quizBundle.id, 'elapsedTimeInSeconds', seconds);
       setter(quizBundle.id, 'completedAt', DateTime.now().toISO());
@@ -87,7 +92,7 @@ const QuizContainer: FC<QuizContainerProps> = ({ category, quizBundleId }) => {
       setter(quizBundle.id, 'currentQuizzesIndex', currentQuizzesIndex + 1);
       setSelectedIndex(null);
     }
-  }, [currentQuizzesIndex, isLastQuiz, openScreen, quizBundle, seconds, setter]);
+  }, [currentQuizzesIndex, isLastQuiz, navigation, quizBundle, seconds, setter]);
 
   const handleCheckAnswer = useCallback(() => {
     if (!quizBundle) {

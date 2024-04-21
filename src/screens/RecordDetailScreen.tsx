@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import CLText from '../components/common/CLText';
 import NavBackScreenHeader from '../components/common/NavBackScreenHeader';
 import TabView from '../components/common/TabView';
 import QuizContainer from '../components/QuizContainer';
 import QuizReportContainer from '../components/QuizReportContainer';
-import useOpenScreen from '../hooks/useOpenScreen';
 import useQuizBundle from '../hooks/useQuizBundle';
 import { ScreenParamList } from '../routes/NavigationContainer';
 import { color } from '../styles/color';
@@ -25,7 +25,7 @@ const TABS: { key: TabKey; title: string }[] = [
 const RecordDetailScreen = ({ route }: Props) => {
   const { quizBundleId } = route.params;
 
-  const { openScreen } = useOpenScreen();
+  const navigation = useNavigation<NativeStackNavigationProp<ScreenParamList>>();
   const { quizBundle, setter, quizReset } = useQuizBundle({
     quizBundleId,
   });
@@ -42,7 +42,7 @@ const RecordDetailScreen = ({ route }: Props) => {
         text: '네',
         onPress: () => {
           quizReset({ id: quizBundleId, type: 'again' });
-          openScreen('replace', 'QuizDetail', { quizBundleId });
+          navigation.replace('QuizDetail', { quizBundleId });
         },
         style: 'destructive',
       },
@@ -52,7 +52,7 @@ const RecordDetailScreen = ({ route }: Props) => {
         style: 'cancel',
       },
     ]);
-  }, [openScreen, quizBundleId, quizReset]);
+  }, [navigation, quizBundleId, quizReset]);
 
   // console.log('RecordDetailScreen 🎁', JSON.stringify(quizBundle));
 

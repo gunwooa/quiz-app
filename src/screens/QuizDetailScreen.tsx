@@ -1,15 +1,14 @@
 import React, { useCallback } from 'react';
 import { Alert, BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { useFocusEffect } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import useGenerateQuizBundleQuery from './useGenerateQuizBundleQuery';
 import CLText from '../components/common/CLText';
 import NavBackScreenHeader from '../components/common/NavBackScreenHeader';
 import QuizContainer from '../components/QuizContainer';
 import QuizDetailSkeleton from '../components/QuizDetailSkeleton';
-import useOpenScreen from '../hooks/useOpenScreen';
 import useQuizBundle from '../hooks/useQuizBundle';
 import { ScreenParamList } from '../routes/NavigationContainer';
 import { useObserverStore } from '../stores/observer';
@@ -21,7 +20,7 @@ type Props = NativeStackScreenProps<ScreenParamList, 'QuizDetail'>;
 const QuizDetailScreen = ({ route }: Props) => {
   const { category, quizBundleId, queryEnabled = false } = route.params;
 
-  const { goBack } = useOpenScreen();
+  const navigation = useNavigation<NativeStackNavigationProp<ScreenParamList>>();
   const { notify } = useObserverStore();
 
   const { isFetching } = useGenerateQuizBundleQuery({
@@ -37,7 +36,7 @@ const QuizDetailScreen = ({ route }: Props) => {
 
   const handleGoBack = useCallback(() => {
     if (quizBundle?.quizzes[0].selectedIndex === null) {
-      goBack();
+      navigation.goBack();
       return;
     }
 
@@ -45,7 +44,7 @@ const QuizDetailScreen = ({ route }: Props) => {
       {
         text: '네',
         onPress: () => {
-          goBack();
+          navigation.goBack();
           /** @description quizReset 은 화면에 들어 오는 시점에 초기화 함, 이유는 앱을 메모리에서 날려버렸을때를 대비해서임 */
         },
         style: 'destructive',
@@ -56,7 +55,7 @@ const QuizDetailScreen = ({ route }: Props) => {
         style: 'cancel',
       },
     ]);
-  }, [goBack, quizBundle?.quizzes]);
+  }, [navigation, quizBundle?.quizzes]);
 
   useFocusEffect(
     useCallback(() => {
