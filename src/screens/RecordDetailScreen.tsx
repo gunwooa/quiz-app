@@ -7,6 +7,7 @@ import CLText from '../components/common/CLText';
 import NavBackScreenHeader from '../components/common/NavBackScreenHeader';
 import TabView from '../components/common/TabView';
 import QuizContainer from '../components/QuizContainer';
+import QuizReportContainer from '../components/QuizReportContainer';
 import useOpenScreen from '../hooks/useOpenScreen';
 import useQuizBundle from '../hooks/useQuizBundle';
 import { ScreenParamList } from '../routes/NavigationContainer';
@@ -53,7 +54,7 @@ const RecordDetailScreen = ({ route }: Props) => {
     ]);
   }, [openScreen, quizBundleId, quizReset]);
 
-  console.log('RecordDetailScreen 🎁', quizBundle);
+  // console.log('RecordDetailScreen 🎁', JSON.stringify(quizBundle));
 
   useEffect(() => {
     setter(quizBundleId, 'currentQuizzesIndex', 0);
@@ -84,7 +85,7 @@ const RecordDetailScreen = ({ route }: Props) => {
         onChangeTabKey={handleIndexChange}
         tabBarItemStyle={styles.tabBarItemStyle}
         screens={[
-          { tabKey: 'report', screen: <View /> },
+          { tabKey: 'report', screen: <QuizReportContainer quizBundleId={quizBundleId} /> },
           { tabKey: 'review-note', screen: <QuizContainer quizBundleId={quizBundleId} /> },
         ]}
       />

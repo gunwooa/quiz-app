@@ -6,7 +6,7 @@ import useQuizBundle from '../hooks/useQuizBundle';
 import { color } from '../styles/color';
 
 type QuizTotalIndicatorProps = {
-  quizBundleId?: number;
+  quizBundleId: number;
 };
 
 const SCREEN_WIDTH = Dimensions.get('window').width;

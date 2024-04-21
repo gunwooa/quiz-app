@@ -1,8 +1,9 @@
-import React, { FC, useCallback, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import CLText from './common/CLText';
 import { color } from '../styles/color';
+import { formatTime } from '../utils/common';
 
 type QuizTimerProps = {
   seconds: number;
@@ -12,15 +13,6 @@ type QuizTimerProps = {
 
 const QuizTimer: FC<QuizTimerProps> = ({ seconds, isActive, setSeconds }) => {
   const interval = useRef<NodeJS.Timeout | null>(null);
-
-  const formatTime = useCallback(() => {
-    const getSeconds = `0${seconds % 60}`.slice(-2);
-    const minutes = `${Math.floor(seconds / 60)}`;
-    const getMinutes = `0${Number(minutes) % 60}`.slice(-2);
-    const getHours = `0${Math.floor(seconds / 3600)}`.slice(-2);
-
-    return `${getHours} : ${getMinutes} : ${getSeconds}`;
-  }, [seconds]);
 
   useEffect(() => {
     if (isActive) {
@@ -36,7 +28,7 @@ const QuizTimer: FC<QuizTimerProps> = ({ seconds, isActive, setSeconds }) => {
   return (
     <View style={styles.container}>
       <CLText type="H3" color={color.GRAY_SCALE_7}>
-        {formatTime()}
+        {formatTime(seconds)}
       </CLText>
     </View>
   );

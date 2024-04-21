@@ -18,7 +18,7 @@ type TextStyleTypes =
   | 'Caption4';
 
 type CLTextProps = {
-  type: TextStyleTypes;
+  type?: TextStyleTypes;
   color?: string;
   textAlign?: 'left' | 'center' | 'right';
   mt?: number;
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
 });
 
 const CLText: React.FC<CLTextProps> = ({
-  type,
+  type = 'Body3',
   color: _color = color.BLACK,
   textAlign,
   mt,
