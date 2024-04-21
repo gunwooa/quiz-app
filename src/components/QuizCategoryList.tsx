@@ -1,16 +1,17 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useId, useRef } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { QuizCategory } from '~/src/types';
+import { ObserverKey, QuizCategory, ScreenListScrollToTopObserverParams } from '~/src/types';
 
 import QuizListItem from './QuizListItem';
 import { usePreventDoubleClick } from '../hooks/usePreventDoubleClick';
 import useQuizBundle from '../hooks/useQuizBundle';
 import useQuizCategoriesQuery from '../hooks/useQuizCategoriesQuery';
 import { ScreenParamList } from '../routes/NavigationContainer';
+import { useObserverStore } from '../stores/observer';
 
 type QuizCategoryListProps = {};
 
@@ -19,6 +20,10 @@ const QuizCategoryList: FC<QuizCategoryListProps> = () => {
   const { preventDoubleClick } = usePreventDoubleClick();
   const { data: categories } = useQuizCategoriesQuery();
   const { getProgressingQuizBundleIndex, quizReset, quizBundleList } = useQuizBundle({});
+  const { add, remove } = useObserverStore();
+
+  const flatListRef = useRef<FlatList>(null);
+  const cid = useId();
 
   const handlePressCategory = preventDoubleClick((category: QuizCategory) => {
     const quizBundle = quizBundleList[getProgressingQuizBundleIndex(category.id)];
@@ -28,9 +33,25 @@ const QuizCategoryList: FC<QuizCategoryListProps> = () => {
     navigation.push('QuizDetail', { category, queryEnabled });
   });
 
+  useEffect(() => {
+    const observer = {
+      id: cid,
+      listener: (value: ScreenListScrollToTopObserverParams) => {
+        if (value === 'QuizTab') {
+          flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+        }
+      },
+    };
+    add(ObserverKey.ScreenListScrollToTop, observer);
+    return () => {
+      remove(ObserverKey.ScreenListScrollToTop, observer.id);
+    };
+  }, [add, cid, remove]);
+
   return (
     <>
       <FlatList
+        ref={flatListRef}
         data={categories}
         renderItem={({ item }) => {
           return (

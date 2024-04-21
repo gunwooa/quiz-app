@@ -8,7 +8,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CLIcon, { CLIconProps } from './common/CLIcon';
 import { MainTabParamList } from '../routes/MainTabNavigator';
 import { ScreenParamList } from '../routes/NavigationContainer';
+import { useObserverStore } from '../stores/observer';
 import { color } from '../styles/color';
+import { ObserverKey } from '../types';
 
 type MainTabBarProps = {} & BottomTabBarProps;
 
@@ -22,19 +24,21 @@ const TAB_ICON: Record<HomeTabRouteName, CLIconProps['icon'][]> = {
 const MainTabBar: FC<MainTabBarProps> = (props) => {
   const navigation = useNavigation<NativeStackNavigationProp<ScreenParamList>>();
 
-  const prevScreenName = useRef<HomeTabRouteName | null>(null);
+  const { notify } = useObserverStore();
+
+  const prevScreenName = useRef<HomeTabRouteName | null>('QuizTab');
 
   const handleChangeTab = useCallback(
     (routeName: HomeTabRouteName) => {
       if (prevScreenName.current === routeName) {
-        // TODO : Scroll to top
+        notify(ObserverKey.ScreenListScrollToTop, routeName);
       }
 
       navigation.navigate(routeName);
 
       prevScreenName.current = routeName;
     },
-    [navigation],
+    [navigation, notify],
   );
 
   return (

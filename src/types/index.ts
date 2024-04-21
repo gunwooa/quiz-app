@@ -1,3 +1,5 @@
+import { ScreenParamList } from '../routes/NavigationContainer';
+
 export type QuizCategory = {
   id: number;
   name: string;
@@ -23,4 +25,7 @@ export type QuizResponse = {
 
 export enum ObserverKey {
   QuizRefetchCall = 'quiz-refetch-call',
+  ScreenListScrollToTop = 'screen-list-scroll-to-top',
 }
+
+export type ScreenListScrollToTopObserverParams = keyof ScreenParamList;

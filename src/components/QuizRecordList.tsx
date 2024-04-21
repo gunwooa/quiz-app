@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useId, useMemo, useRef } from 'react';
 import { Dimensions, SectionList, StyleSheet, View } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
@@ -10,8 +10,10 @@ import QuizListItem from './QuizListItem';
 import { usePreventDoubleClick } from '../hooks/usePreventDoubleClick';
 import useQuizBundle from '../hooks/useQuizBundle';
 import { ScreenParamList } from '../routes/NavigationContainer';
+import { useObserverStore } from '../stores/observer';
 import { QuizBundle } from '../stores/quiz-bundle-list';
 import { color } from '../styles/color';
+import { ObserverKey, ScreenListScrollToTopObserverParams } from '../types';
 
 type QuizRecordListProps = {};
 
@@ -26,6 +28,10 @@ const QuizRecordList: FC<QuizRecordListProps> = () => {
   const navigation = useNavigation<NativeStackNavigationProp<ScreenParamList>>();
   const { preventDoubleClick } = usePreventDoubleClick();
   const { quizBundleList, quizReset } = useQuizBundle({});
+  const { add, remove } = useObserverStore();
+
+  const sectionListRef = useRef<SectionList>(null);
+  const cid = useId();
 
   // console.log('✅ QuizRecordList ', quizBundleList.length);
 
@@ -69,9 +75,29 @@ const QuizRecordList: FC<QuizRecordListProps> = () => {
     });
   });
 
+  useEffect(() => {
+    const observer = {
+      id: cid,
+      listener: (value: ScreenListScrollToTopObserverParams) => {
+        if (value === 'RecordTab') {
+          sectionListRef.current?.scrollToLocation({
+            sectionIndex: 0,
+            itemIndex: 0,
+            animated: true,
+          });
+        }
+      },
+    };
+    add(ObserverKey.ScreenListScrollToTop, observer);
+    return () => {
+      remove(ObserverKey.ScreenListScrollToTop, observer.id);
+    };
+  }, [add, cid, remove]);
+
   return (
     <View>
       <SectionList
+        ref={sectionListRef}
         sections={data}
         stickySectionHeadersEnabled={true}
         renderItem={({ item }) => {
