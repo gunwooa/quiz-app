@@ -33,6 +33,7 @@ interface QuizBundleListStore {
   setter: <K extends keyof QuizBundle>(id: number, key: K, value: QuizBundle[K]) => void;
 
   allReset: () => void;
+  quizBundleReset: (types: QuizBundle['status'][]) => void;
   quizReset: ({ id, type }: { id: number; type: 'progress' | 'again' }) => void;
 }
 
@@ -104,6 +105,13 @@ const useQuizBundleListStore = create<QuizBundleListStore>()(
       allReset: () => {
         set({ quizBundleList: [] });
       },
+      quizBundleReset: (types: QuizBundle['status'][]) => {
+        types.forEach((type) => {
+          set({
+            quizBundleList: get().quizBundleList.filter((q) => q.status !== type),
+          });
+        });
+      },
       quizReset: ({ id, type }) => {
         set({
           quizBundleList: get().quizBundleList.map((q) =>
@@ -112,6 +120,7 @@ const useQuizBundleListStore = create<QuizBundleListStore>()(
                   ...q,
                   status: type,
                   currentQuizzesIndex: 0,
+                  createdAt: DateTime.now().toISO(),
                   completedAt: null,
                   elapsedTimeInSeconds: null,
                   quizzes: q.quizzes.map((quiz) => {

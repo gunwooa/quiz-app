@@ -1,71 +1,54 @@
 import React, { useCallback } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import ScreenHeader from '~/src/components/common/ScreenHeader';
 
-import QuizRecordListItem from '../components/QuizRecordListItem';
-import useOpenScreen from '../hooks/useOpenScreen';
+import CLText from '../components/common/CLText';
+import QuizRecordList from '../components/QuizRecordList';
 import useQuizBundle from '../hooks/useQuizBundle';
 import { ScreenParamList } from '../routes/NavigationContainer';
-import { QuizBundle } from '../stores/quiz-bundle-list';
+import { color } from '../styles/color';
 
 type Props = NativeStackScreenProps<ScreenParamList, 'RecordTab'>;
 
-const SCREEN_NAME = {
-  again: 'QuizDetail',
-  complete: 'RecordDetail',
-} as const;
-
 const RecordTabScreen = ({}: Props) => {
-  const { quizBundleList, quizReset } = useQuizBundle({});
-  const { openScreen } = useOpenScreen();
+  const { quizBundleReset } = useQuizBundle({});
 
-  const handlePressCategory = useCallback(
-    (quizBundle: QuizBundle) => {
-      if (quizBundle.status === 'again') {
-        quizReset({ id: quizBundle?.id ?? -1, type: 'again' });
-      }
-
-      openScreen('push', SCREEN_NAME[quizBundle.status as 'again' | 'complete'], {
-        quizBundleId: quizBundle.id,
-      });
-    },
-    [openScreen, quizReset],
-  );
-
-  console.log('🐾 RecordTabScreen ', quizBundleList.length);
+  const handleReset = useCallback(() => {
+    Alert.alert('알림', '모든 퀴즈 기록이 초기화됩니다.\n그래도 초기화 하시겠습니까?', [
+      {
+        text: '네',
+        onPress: () => {
+          quizBundleReset(['again', 'complete']);
+        },
+        style: 'destructive',
+      },
+      {
+        text: '아니요',
+        onPress: () => {},
+        style: 'cancel',
+      },
+    ]);
+  }, [quizBundleReset]);
 
   return (
     <>
-      <ScreenHeader headerLeft="기록" />
-
-      <FlatList
-        data={quizBundleList.filter((q) => q.status !== 'progress')}
-        renderItem={({ item }) => {
-          return (
-            <QuizRecordListItem
-              quizBundle={item}
-              onPress={() => {
-                handlePressCategory(item);
-              }}
-            />
-          );
-        }}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.contentContainer}
+      <ScreenHeader
+        headerLeft="기록"
+        headerRight={
+          <TouchableOpacity onPress={handleReset}>
+            <CLText type="Body3" color={color.BLUE}>
+              초기화
+            </CLText>
+          </TouchableOpacity>
+        }
       />
+
+      <QuizRecordList />
     </>
   );
 };
 
 export default RecordTabScreen;
-
-const styles = StyleSheet.create({
-  contentContainer: {
-    paddingVertical: 20,
-    paddingHorizontal: 24,
-    gap: 20,
-  },
-});

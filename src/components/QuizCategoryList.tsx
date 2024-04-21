@@ -1,30 +1,32 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 
-import useOpenScreen from '~/src/hooks/useOpenScreen';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import { QuizCategory } from '~/src/types';
 
 import QuizCategoryListItem from './QuizCategoryListItem';
+import { usePreventDoubleClick } from '../hooks/usePreventDoubleClick';
 import useQuizBundle from '../hooks/useQuizBundle';
 import useQuizCategoriesQuery from '../hooks/useQuizCategoriesQuery';
+import { ScreenParamList } from '../routes/NavigationContainer';
 
 type QuizCategoryListProps = {};
 
 const QuizCategoryList: FC<QuizCategoryListProps> = () => {
-  const { openScreen } = useOpenScreen();
+  const navigation = useNavigation<NativeStackNavigationProp<ScreenParamList>>();
+  const { preventDoubleClick } = usePreventDoubleClick();
   const { data: categories } = useQuizCategoriesQuery();
   const { getProgressingQuizBundleIndex, quizReset, quizBundleList } = useQuizBundle({});
 
-  const handlePressCategory = useCallback(
-    (category: QuizCategory) => {
-      const quizBundle = quizBundleList[getProgressingQuizBundleIndex(category.id)];
-      quizReset({ id: quizBundle?.id ?? -1, type: 'progress' });
+  const handlePressCategory = preventDoubleClick((category: QuizCategory) => {
+    const quizBundle = quizBundleList[getProgressingQuizBundleIndex(category.id)];
+    quizReset({ id: quizBundle?.id ?? -1, type: 'progress' });
 
-      const queryEnabled = getProgressingQuizBundleIndex(category.id) === -1;
-      openScreen('push', 'QuizDetail', { category, queryEnabled });
-    },
-    [getProgressingQuizBundleIndex, openScreen, quizBundleList, quizReset],
-  );
+    const queryEnabled = getProgressingQuizBundleIndex(category.id) === -1;
+    navigation.push('QuizDetail', { category, queryEnabled });
+  });
 
   return (
     <>
