@@ -152,7 +152,7 @@ const QuizContainer: FC<QuizContainerProps> = ({ category, quizBundleId }) => {
         selectedIndex={selectedIndex}
         ListHeaderComponent={
           quizBundle?.status === 'complete' ? (
-            <QuizTotalIndicator quizBundleId={quizBundleId} />
+            <QuizTotalIndicator quizBundleId={quizBundleId ?? -1} />
           ) : (
             <QuizTimer seconds={seconds} isActive={isActive} setSeconds={setSeconds} />
           )
