@@ -112,6 +112,7 @@ const useQuizBundleListStore = create<QuizBundleListStore>()(
                   ...q,
                   status: type,
                   currentQuizzesIndex: 0,
+                  createdAt: DateTime.now().toISO(),
                   completedAt: null,
                   elapsedTimeInSeconds: null,
                   quizzes: q.quizzes.map((quiz) => {

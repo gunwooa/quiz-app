@@ -1,6 +1,8 @@
 import React, { FC, useCallback, useMemo } from 'react';
 import { Dimensions, SectionList, StyleSheet, View } from 'react-native';
 
+import { DateTime } from 'luxon';
+
 import CLText from './common/CLText';
 import QuizRecordListItem from './QuizRecordListItem';
 import useOpenScreen from '../hooks/useOpenScreen';
@@ -27,11 +29,27 @@ const QuizRecordList: FC<QuizRecordListProps> = () => {
     () => [
       {
         title: `완료됨 (${quizBundleList.filter((q) => q.status === 'complete').length})`,
-        data: quizBundleList.filter((q) => q.status === 'complete'),
+        data: quizBundleList
+          .filter((q) => q.status === 'complete')
+          // 최신순으로 정렬
+          .sort((a, b) => {
+            return (
+              DateTime.fromISO(b.completedAt ?? '').toMillis() -
+              DateTime.fromISO(a.completedAt ?? '').toMillis()
+            );
+          }),
       },
       {
         title: `다시 풀기 (${quizBundleList.filter((q) => q.status === 'again').length})`,
-        data: quizBundleList.filter((q) => q.status === 'again'),
+        data: quizBundleList
+          .filter((q) => q.status === 'again')
+          // 최신순으로 정렬
+          .sort((a, b) => {
+            return (
+              DateTime.fromISO(b.createdAt ?? '').toMillis() -
+              DateTime.fromISO(a.createdAt ?? '').toMillis()
+            );
+          }),
       },
     ],
     [quizBundleList],

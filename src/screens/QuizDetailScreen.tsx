@@ -69,7 +69,6 @@ const QuizDetailScreen = ({ route }: Props) => {
   );
 
   console.log(category, quizBundleId, '✅', JSON.stringify(quizBundle));
-  // console.log('2✅', JSON.stringify(quizBundleList));
 
   return (
     <>

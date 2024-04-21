@@ -1,6 +1,8 @@
 import React, { FC, useMemo } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { DateTime } from 'luxon';
+
 import { color } from '~/src/styles/color';
 import { QuizCategory } from '~/src/types';
 
@@ -38,16 +40,22 @@ const QuizCategoryListItem: FC<QuizCategoryListItemProps> = ({ category, onPress
           {category.name}
         </CLText>
 
-        {quizBundle?.status && (
-          <CLText
-            type="Caption1"
-            color={getStatusMessageAndColor(quizBundle?.status).color}
-            textAlign="right"
-            mr={-16}
-            mb={-4}
-            numberOfLines={1}>
-            {getStatusMessageAndColor(quizBundle?.status).message}
-          </CLText>
+        {quizBundle?.status === 'progress' && (
+          <View style={styles.statusBox}>
+            <CLText type="Caption2" color={color.GRAY_SCALE_7}>
+              퀴즈 생성 날짜{'\n'}
+              {`${DateTime.fromISO(quizBundle?.createdAt ?? '').toFormat('yyyy-MM-dd HH:mm:ss')}`}
+            </CLText>
+
+            <CLText
+              type="Caption1"
+              color={getStatusMessageAndColor('progress').color}
+              textAlign="right"
+              mr={-16}
+              numberOfLines={1}>
+              {getStatusMessageAndColor('progress').message}
+            </CLText>
+          </View>
         )}
       </View>
       <CLIcon icon="ArrowRightGray" stroke={color.GRAY_SCALE_5} width={14} height={14} />
@@ -75,5 +83,10 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'space-between',
     marginLeft: 12,
+  },
+  statusBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
   },
 });

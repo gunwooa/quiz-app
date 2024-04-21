@@ -37,14 +37,17 @@ const QuizRecordListItem: FC<QuizRecordListItemProps> = ({
           {quizBundle.category.name}
         </CLText>
 
-        <View style={styles.completedAtBox}>
-          {quizBundle?.completedAt ? (
+        <View style={styles.statusBox}>
+          {quizBundle?.status === 'complete' ? (
             <CLText type="Caption2" color={color.GRAY_SCALE_7}>
               퀴즈 푼 날짜{'\n'}
               {`${DateTime.fromISO(quizBundle?.completedAt ?? '').toFormat('yyyy-MM-dd HH:mm:ss')}`}
             </CLText>
           ) : (
-            <View />
+            <CLText type="Caption2" color={color.GRAY_SCALE_7}>
+              퀴즈 생성 날짜{'\n'}
+              {`${DateTime.fromISO(quizBundle?.createdAt ?? '').toFormat('yyyy-MM-dd HH:mm:ss')}`}
+            </CLText>
           )}
 
           <CLText
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginLeft: 12,
   },
-  completedAtBox: {
+  statusBox: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
