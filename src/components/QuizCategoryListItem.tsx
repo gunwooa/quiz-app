@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { color } from '~/src/styles/color';
@@ -8,13 +8,14 @@ import CLIcon from './common/CLIcon';
 import CLText from './common/CLText';
 import { CATEGORY_LOGO } from '../constants/image';
 import useQuizBundle from '../hooks/useQuizBundle';
+import { getStatusMessageAndColor } from '../utils/common';
 
 type QuizCategoryListItemProps = {
   category: QuizCategory;
   onPress?: () => void | Promise<void>;
 };
 
-export const CATEGORY_ITEM_HEIGHT = 100;
+export const CATEGORY_ITEM_HEIGHT = 120;
 const LOGO_SIZE = 68;
 
 const QuizCategoryListItem: FC<QuizCategoryListItemProps> = ({ category, onPress }) => {
@@ -24,21 +25,6 @@ const QuizCategoryListItem: FC<QuizCategoryListItemProps> = ({ category, onPress
     () => quizBundleList[getProgressingQuizBundleIndex(category.id)],
     [category.id, getProgressingQuizBundleIndex, quizBundleList],
   );
-
-  const status = useCallback(() => {
-    if (!quizBundle) {
-      return '';
-    }
-
-    if (quizBundle.status === 'complete') {
-      return '완료';
-    } else if (quizBundle.status === 'again') {
-      return '다시 푸는중';
-    } else if (quizBundle.status === 'progress') {
-      return '진행중';
-    }
-    return '';
-  }, [quizBundle]);
 
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
@@ -52,15 +38,15 @@ const QuizCategoryListItem: FC<QuizCategoryListItemProps> = ({ category, onPress
           {category.name}
         </CLText>
 
-        {status() && (
+        {quizBundle?.status && (
           <CLText
-            type="Caption2"
-            color={color.GRAY_SCALE_6}
+            type="Caption1"
+            color={getStatusMessageAndColor(quizBundle?.status).color}
             textAlign="right"
             mr={-16}
             mb={-4}
             numberOfLines={1}>
-            {status()}
+            {getStatusMessageAndColor(quizBundle?.status).message}
           </CLText>
         )}
       </View>

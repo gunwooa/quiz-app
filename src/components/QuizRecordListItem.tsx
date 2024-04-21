@@ -1,5 +1,7 @@
-import React, { FC, useCallback } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { FC } from 'react';
+import { Image, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+
+import { DateTime } from 'luxon';
 
 import { QuizBundle } from '~/src/stores/quiz-bundle-list';
 import { color } from '~/src/styles/color';
@@ -7,33 +9,24 @@ import { color } from '~/src/styles/color';
 import CLIcon from './common/CLIcon';
 import CLText from './common/CLText';
 import { CATEGORY_LOGO } from '../constants/image';
+import { getStatusMessageAndColor } from '../utils/common';
 
 type QuizRecordListItemProps = {
   quizBundle: QuizBundle;
+  containerStyle?: ViewStyle;
   onPress?: () => void | Promise<void>;
 };
 
-export const CATEGORY_ITEM_HEIGHT = 160;
+export const CATEGORY_ITEM_HEIGHT = 120;
 const LOGO_SIZE = 60;
 
-const QuizRecordListItem: FC<QuizRecordListItemProps> = ({ quizBundle, onPress }) => {
-  const status = useCallback(() => {
-    if (!quizBundle) {
-      return '';
-    }
-
-    if (quizBundle.status === 'complete') {
-      return '완료';
-    } else if (quizBundle.status === 'again') {
-      return '다시 푸는중';
-    } else if (quizBundle.status === 'progress') {
-      return '진행중';
-    }
-    return '';
-  }, [quizBundle]);
-
+const QuizRecordListItem: FC<QuizRecordListItemProps> = ({
+  quizBundle,
+  containerStyle,
+  onPress,
+}) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
+    <TouchableOpacity onPress={onPress} style={[styles.container, containerStyle]}>
       <Image
         source={CATEGORY_LOGO[quizBundle.category.id]}
         style={[styles.logo, { width: LOGO_SIZE, height: LOGO_SIZE, borderRadius: LOGO_SIZE / 2 }]}
@@ -44,17 +37,27 @@ const QuizRecordListItem: FC<QuizRecordListItemProps> = ({ quizBundle, onPress }
           {quizBundle.category.name}
         </CLText>
 
-        {status() && (
+        <View style={styles.completedAtBox}>
+          {quizBundle?.completedAt ? (
+            <CLText type="Caption2" color={color.GRAY_SCALE_7}>
+              퀴즈 푼 날짜{'\n'}
+              {`${DateTime.fromISO(quizBundle?.completedAt ?? '').toFormat('yyyy-MM-dd HH:mm:ss')}`}
+            </CLText>
+          ) : (
+            <View />
+          )}
+
           <CLText
-            type="Caption2"
-            color={color.GRAY_SCALE_6}
+            type="Caption1"
+            color={getStatusMessageAndColor(quizBundle?.status).color}
             textAlign="right"
             mr={-16}
             numberOfLines={1}>
-            {status()}
+            {getStatusMessageAndColor(quizBundle?.status).message}
           </CLText>
-        )}
+        </View>
       </View>
+
       <CLIcon icon="ArrowRightGray" stroke={color.GRAY_SCALE_5} width={14} height={14} />
     </TouchableOpacity>
   );
@@ -80,5 +83,10 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'space-between',
     marginLeft: 12,
+  },
+  completedAtBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
   },
 });

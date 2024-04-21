@@ -24,3 +24,16 @@ export const getGrade = (score: number) => {
     return { message: '안타깝네요', color: '#F44336' };
   }
 };
+
+export const getStatusMessageAndColor = (status?: 'progress' | 'again' | 'complete') => {
+  switch (status) {
+    case 'progress':
+      return { message: '진행 중', color: '#2196F3' };
+    case 'again':
+      return { message: '다시 푸는 중', color: '#FF9800' };
+    case 'complete':
+      return { message: '완료', color: '#4CAF50' };
+    default:
+      return { message: '', color: '#000000' };
+  }
+};
