@@ -73,6 +73,7 @@ const QuizRecordList: FC<QuizRecordListProps> = () => {
     <View>
       <SectionList
         sections={data}
+        stickySectionHeadersEnabled={true}
         renderItem={({ item }) => {
           return (
             <QuizRecordListItem
