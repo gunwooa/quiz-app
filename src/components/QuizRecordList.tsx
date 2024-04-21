@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DateTime } from 'luxon';
 
 import CLText from './common/CLText';
-import QuizRecordListItem from './QuizRecordListItem';
+import QuizListItem from './QuizListItem';
 import { usePreventDoubleClick } from '../hooks/usePreventDoubleClick';
 import useQuizBundle from '../hooks/useQuizBundle';
 import { ScreenParamList } from '../routes/NavigationContainer';
@@ -76,8 +76,8 @@ const QuizRecordList: FC<QuizRecordListProps> = () => {
         stickySectionHeadersEnabled={true}
         renderItem={({ item }) => {
           return (
-            <QuizRecordListItem
-              quizBundle={item}
+            <QuizListItem
+              quizBundleId={item.id}
               containerStyle={styles.listItem}
               onPress={() => {
                 handlePressCategory(item);

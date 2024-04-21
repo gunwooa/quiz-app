@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { QuizCategory } from '~/src/types';
 
-import QuizCategoryListItem from './QuizCategoryListItem';
+import QuizListItem from './QuizListItem';
 import { usePreventDoubleClick } from '../hooks/usePreventDoubleClick';
 import useQuizBundle from '../hooks/useQuizBundle';
 import useQuizCategoriesQuery from '../hooks/useQuizCategoriesQuery';
@@ -34,7 +34,7 @@ const QuizCategoryList: FC<QuizCategoryListProps> = () => {
         data={categories}
         renderItem={({ item }) => {
           return (
-            <QuizCategoryListItem
+            <QuizListItem
               category={item}
               onPress={() => {
                 handlePressCategory(item);
