@@ -4,11 +4,11 @@ import { Alert, BackHandler, StyleSheet, TouchableOpacity, View } from 'react-na
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import useGenerateQuizBundleQuery from './useGenerateQuizBundleQuery';
 import CLText from '../components/common/CLText';
 import NavBackScreenHeader from '../components/common/NavBackScreenHeader';
 import QuizContainer from '../components/QuizContainer';
 import QuizDetailSkeleton from '../components/QuizDetailSkeleton';
+import useGenerateQuizBundleQuery from '../hooks/useGenerateQuizBundleQuery';
 import useQuizBundle from '../hooks/useQuizBundle';
 import { ScreenParamList } from '../routes/NavigationContainer';
 import { useObserverStore } from '../stores/observer';

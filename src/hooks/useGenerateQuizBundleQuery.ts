@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import useQuizDetailQuery from '../hooks/useQuizDetailQuery';
+import useQuizDetailQuery from './useQuizDetailQuery';
 import useQuizBundleListStore from '../stores/quiz-bundle-list';
 import { QuizCategory } from '../types';
 
