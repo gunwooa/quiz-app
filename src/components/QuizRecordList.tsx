@@ -27,7 +27,7 @@ const QuizRecordList: FC<QuizRecordListProps> = () => {
   const { preventDoubleClick } = usePreventDoubleClick();
   const { quizBundleList, quizReset } = useQuizBundle({});
 
-  console.log('🐾 RecordTabScreen ', quizBundleList.length);
+  // console.log('✅ QuizRecordList ', quizBundleList.length);
 
   const data = useMemo(
     () => [

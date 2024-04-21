@@ -67,7 +67,7 @@ const QuizDetailScreen = ({ route }: Props) => {
     }, [handleGoBack]),
   );
 
-  console.log(category, quizBundleId, '✅', JSON.stringify(quizBundle));
+  // console.log('✅ QuizDetailScreen ', category, quizBundleId, JSON.stringify(quizBundle));
 
   return (
     <>

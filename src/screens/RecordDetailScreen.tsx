@@ -54,7 +54,7 @@ const RecordDetailScreen = ({ route }: Props) => {
     ]);
   }, [navigation, quizBundleId, quizReset]);
 
-  // console.log('RecordDetailScreen 🎁', JSON.stringify(quizBundle));
+  // console.log('✅ RecordDetailScreen ', JSON.stringify(quizBundle));
 
   useEffect(() => {
     setter(quizBundleId, 'currentQuizzesIndex', 0);
