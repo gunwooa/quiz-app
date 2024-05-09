@@ -95,11 +95,10 @@ const useQuizBundleListStore = create<QuizBundleListStore>()(
         set({ quizBundleList: get().quizBundleList.filter((q) => q.id !== id) });
       },
       setter: (id, key, value) => {
-        set({
-          quizBundleList: get().quizBundleList.map((q) =>
-            q.id === id ? { ...q, [key]: value } : q,
-          ),
-        });
+        const updatedQuizBundleList = get().quizBundleList.map((q) =>
+          q.id === id ? { ...q, [key]: value } : q,
+        );
+        set({ quizBundleList: updatedQuizBundleList });
       },
 
       allReset: () => {

@@ -98,8 +98,9 @@ const QuizContainer: FC<QuizContainerProps> = ({ category, quizBundleId }) => {
     if (!quizBundle) {
       return;
     }
-    const updatedQuizzes = [...quizBundle.quizzes];
+    const updatedQuizzes = quizBundle.quizzes.map((quiz) => ({ ...quiz }));
     updatedQuizzes[currentQuizzesIndex].selectedIndex = selectedIndex;
+
     setter(quizBundle.id, 'quizzes', updatedQuizzes);
 
     if (isLastQuiz) {
